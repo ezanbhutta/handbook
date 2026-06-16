@@ -13,7 +13,8 @@ supabase/
 │   ├── 0002_security.sql   RLS helper functions + policies
 │   ├── 0003_rpc.sql        get_navigation() + search_handbook()
 │   ├── 0004_seed.sql       12 chapters + starter synonyms
-│   └── 0005_storage.sql    section-image bucket + policies
+│   ├── 0005_storage.sql    section-image bucket + policies
+│   └── 0006_access_links.sql  no-login role links + reader RPCs
 └── functions/
     └── admin-users/        privileged user management (service-role only)
 ```
@@ -50,8 +51,21 @@ very first admin is provisioned by hand.
    values ('PASTE-AUTH-USER-UUID', 'Haseeb', 'manager', true, true);
    ```
 
-That account can now sign in, reach `/admin`, and create everyone else from
-**Admin → Users** (which calls the `admin-users` function).
+That account can now sign in and reach `/admin`.
+
+## Team access — role links (no login)
+
+Migration `0006` seeds one secret link per role and exposes `SECURITY DEFINER`
+reader RPCs (`nav_for_token`, `section_for_token`, `search_for_token`, …) that
+take a token, resolve its role, and return only that role's content. The base
+tables deny anonymous reads, so the token is the only way in.
+
+After deploying, sign in and open **Admin → Links**. Give **each teammate their
+own link** (Add person → name + role). Because links are per-person, if one
+leaks you turn off just that one — everyone else is unaffected. A link looks like
+`https://your-site/r/<token>`. The migration also seeds one shared link per role
+to start; delete those if you prefer pure per-person links. The `admin-users`
+function is now only needed to create *additional admin* accounts.
 
 ## How security works (quick reference)
 

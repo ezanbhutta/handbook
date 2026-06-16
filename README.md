@@ -4,11 +4,21 @@ One live company handbook. A single source of truth, with role-derived access,
 intelligent search, and a "What's New" banner. The admin authors and approves
 every change; the database — not the UI — decides who can read what.
 
-> **Phase 1 (this build):** the complete, shippable core. Auth, role-based
-> visibility enforced with Row Level Security, the reading experience, Postgres
-> search (typos + keywords + synonyms), What's New, and the full admin authoring
-> suite. The Phase 2 intelligence layer (AI conflict-check, semantic search, gap
-> report) is scaffolded but not wired up.
+**Access model — no team logins.** Each role gets its own secret link
+(`/r/<token>`). A teammate opens their link and reads the common handbook plus
+their role's sections — no password, no account. Only the founder logs in (with
+a password) to author content and manage links. Links are bearer secrets:
+rotate one to instantly revoke it.
+
+**Three reading modes.** Day (bright violet brand), Night (deep indigo), and
+Reading (warm cream + serif body) — picked from the header, remembered per
+device. Tuned for long, comfortable reading on a phone.
+
+> **Phase 1 (this build):** the complete, shippable core. No-login role links +
+> admin password auth, role-based visibility enforced in the database, the
+> reading experience, Postgres search (typos + keywords + synonyms), What's New,
+> and the full admin suite. The Phase 2 intelligence layer (AI conflict-check,
+> semantic search, gap report) is scaffolded but not wired up.
 
 ## Tech stack
 
@@ -22,10 +32,12 @@ every change; the database — not the UI — decides who can read what.
 - **Single source of truth, role-derived access.** Content lives once. Each
   section carries an `allowed_roles` list; it defaults to all six roles
   (visible to everyone) and is narrowed only to restrict a sensitive section.
-- **Visibility is enforced in the database.** `sections`, `change_log`, and the
-  navigation/search RPCs all run under RLS. A user who lacks access can't fetch
-  or search the content — it's unreadable, not just hidden. Search runs
-  `SECURITY INVOKER`, so restricted sections never surface, not even as a hint.
+- **Visibility is enforced in the database.** For the founder (logged in) the
+  base tables run under RLS. For readers (no login) every read goes through
+  `SECURITY DEFINER` token RPCs that resolve the link's role and return only that
+  role's content; the base tables deny anonymous reads, so the token is the only
+  way in. Either way, a role can't fetch or search content it isn't allowed to —
+  restricted sections never surface, not even as a hint.
 - **The book never publishes itself.** The admin writes the change, adds a
   one-line summary, and clicks publish. Publishing writes the section and a
   `change_log` entry whose visibility mirrors the section.

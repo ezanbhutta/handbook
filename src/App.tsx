@@ -8,6 +8,8 @@ import { Chapter } from '@/pages/Chapter'
 import { WhatsNew } from '@/pages/WhatsNew'
 import { SearchPage } from '@/pages/SearchPage'
 import { NotFound } from '@/pages/NotFound'
+import { NoAccess } from '@/pages/NoAccess'
+import { TokenCapture } from '@/pages/TokenCapture'
 
 // Code-split the markdown-heavy reader and the admin area so the core bundle
 // that most staff load on a phone stays small.
@@ -27,6 +29,9 @@ const AdminSections = lazy(() =>
 const SectionEditor = lazy(() =>
   import('@/pages/admin/SectionEditor').then((m) => ({ default: m.SectionEditor })),
 )
+const AdminLinks = lazy(() =>
+  import('@/pages/admin/AdminLinks').then((m) => ({ default: m.AdminLinks })),
+)
 const AdminSynonyms = lazy(() =>
   import('@/pages/admin/AdminSynonyms').then((m) => ({ default: m.AdminSynonyms })),
 )
@@ -41,6 +46,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/welcome" element={<NoAccess />} />
+      <Route path="/r/:token" element={<TokenCapture />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
@@ -57,6 +64,7 @@ export default function App() {
               <Route path="sections" element={<AdminSections />} />
               <Route path="sections/new" element={<SectionEditor />} />
               <Route path="sections/:id/edit" element={<SectionEditor />} />
+              <Route path="links" element={<AdminLinks />} />
               <Route path="synonyms" element={<AdminSynonyms />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="insights" element={<AdminInsights />} />

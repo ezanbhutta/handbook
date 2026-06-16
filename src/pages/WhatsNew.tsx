@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useChangeLog, type ChangeLogEntryWithSlug } from '@/lib/queries'
+import { useChangeLog, type ChangeView } from '@/lib/queries'
 import { formatDateTime } from '@/lib/format'
 import { Icon } from '@/components/Icon'
 import { LoadingState, ErrorState, EmptyState } from '@/components/States'
@@ -10,7 +10,7 @@ const TYPE_META = {
   deleted: { label: 'Removed', icon: 'trash', cls: 'bg-danger-soft text-danger' },
 } as const
 
-function Entry({ entry }: { entry: ChangeLogEntryWithSlug }) {
+function Entry({ entry }: { entry: ChangeView }) {
   const meta = TYPE_META[entry.type]
   const linkable = entry.section?.slug && entry.type !== 'deleted'
 

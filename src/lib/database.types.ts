@@ -165,6 +165,7 @@ export type Database = {
           query_text: string
           results_count: number
           clicked_section_id: string | null
+          searched_role: UserRole | null
           created_at: string
         }
         Insert: {
@@ -173,10 +174,34 @@ export type Database = {
           query_text: string
           results_count?: number
           clicked_section_id?: string | null
+          searched_role?: UserRole | null
           created_at?: string
         }
         Update: {
           clicked_section_id?: string | null
+        }
+        Relationships: []
+      }
+      access_links: {
+        Row: {
+          token: string
+          role: UserRole
+          label: string | null
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          token: string
+          role: UserRole
+          label?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          token?: string
+          role?: UserRole
+          label?: string | null
+          is_active?: boolean
         }
         Relationships: []
       }
@@ -209,6 +234,113 @@ export type Database = {
           snippet: string
           rank: number
         }[]
+      }
+      link_info: {
+        Args: { p_token: string }
+        Returns: { role: UserRole; label: string | null }[]
+      }
+      nav_for_token: {
+        Args: { p_token: string }
+        Returns: {
+          chapter_id: string
+          chapter_title: string
+          chapter_slug: string
+          chapter_order: number
+          chapter_icon: string | null
+          chapter_description: string | null
+          section_id: string
+          section_title: string
+          section_slug: string
+          section_order: number
+        }[]
+      }
+      chapter_for_token: {
+        Args: { p_token: string; p_slug: string }
+        Returns: {
+          id: string
+          title: string
+          slug: string
+          description: string | null
+          icon: string | null
+          order_index: number
+        }[]
+      }
+      chapter_sections_for_token: {
+        Args: { p_token: string; p_slug: string }
+        Returns: {
+          id: string
+          title: string
+          slug: string
+          order_index: number
+          show_in_onboarding: boolean
+        }[]
+      }
+      section_for_token: {
+        Args: { p_token: string; p_slug: string }
+        Returns: {
+          id: string
+          title: string
+          slug: string
+          body: string
+          video_url: string | null
+          allowed_roles: UserRole[]
+          show_in_onboarding: boolean
+          updated_at: string
+          chapter_title: string
+          chapter_slug: string
+        }[]
+      }
+      search_for_token: {
+        Args: { p_token: string; q: string }
+        Returns: {
+          section_id: string
+          section_title: string
+          section_slug: string
+          chapter_title: string
+          chapter_slug: string
+          snippet: string
+          rank: number
+        }[]
+      }
+      latest_change_for_token: {
+        Args: { p_token: string }
+        Returns: {
+          id: string
+          section_title: string | null
+          type: ChangeType
+          summary: string
+          created_at: string
+          section_slug: string | null
+        }[]
+      }
+      changelog_for_token: {
+        Args: { p_token: string }
+        Returns: {
+          id: string
+          section_title: string | null
+          type: ChangeType
+          summary: string
+          created_at: string
+          section_slug: string | null
+        }[]
+      }
+      onboarding_for_token: {
+        Args: { p_token: string }
+        Returns: {
+          id: string
+          title: string
+          slug: string
+          chapter_title: string
+          chapter_slug: string
+        }[]
+      }
+      log_search: {
+        Args: { p_token: string; p_query: string; p_count: number }
+        Returns: string
+      }
+      log_search_click: {
+        Args: { p_token: string; p_log_id: string; p_section_id: string }
+        Returns: undefined
       }
     }
     Enums: {
