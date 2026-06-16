@@ -27,8 +27,7 @@ const ThemeContext = createContext<ThemeState | undefined>(undefined)
 function initialTheme(): Theme {
   const saved = localStorage.getItem(THEME_KEY) as Theme | null
   if (saved && THEMES.includes(saved)) return saved
-  // First visit: respect the OS at night.
-  if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) return 'night'
+  // Default to the clean Day brand; Night/Reading are opt-in from the header.
   return 'day'
 }
 

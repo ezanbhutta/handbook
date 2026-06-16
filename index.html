@@ -2,20 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#7229FF" />
     <meta name="description" content="HaseebMadeIt company handbook — the single source of truth for the team." />
     <title>HaseebMadeIt Handbook</title>
 
-    <!-- Set the theme before paint to avoid a flash of the wrong mode. -->
+    <!-- Set the theme before paint to avoid a flash. Defaults to the clean
+         Day brand; Night/Reading are opt-in from the header. -->
     <script>
       (function () {
         try {
           var t = localStorage.getItem('hb_theme')
-          if (!t) {
-            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day'
-          }
-          document.documentElement.dataset.theme = t
+          document.documentElement.dataset.theme = t || 'day'
         } catch (e) {
           document.documentElement.dataset.theme = 'day'
         }

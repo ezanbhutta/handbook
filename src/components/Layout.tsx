@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAccess } from '@/lib/access'
 import { roleLabel } from '@/lib/roles'
 import { Icon } from './Icon'
+import { Logo } from './Logo'
 import { SearchBar } from './SearchBar'
 import { NavTree } from './NavTree'
 import { UserMenu } from './UserMenu'
@@ -12,9 +13,7 @@ import { LoadingState } from './States'
 function Brand() {
   return (
     <Link to="/" className="flex items-center gap-2.5" aria-label="HaseebMadeIt Handbook — home">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-brand-fg shadow-brand">
-        <Icon name="book" size={20} />
-      </span>
+      <Logo size={34} />
       <span className="text-base font-bold tracking-tight">
         Haseeb<span className="text-brand">MadeIt</span>
       </span>

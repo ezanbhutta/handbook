@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/lib/auth'
 import { Icon } from '@/components/Icon'
+import { Logo } from '@/components/Logo'
 import { Spinner, InlineError } from '@/components/States'
 
 export function Login() {
@@ -43,9 +44,7 @@ export function Login() {
     <div className="grid min-h-dvh place-items-center bg-bg px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-7 flex flex-col items-center text-center">
-          <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand text-brand-fg shadow-sm">
-            <Icon name="book" size={28} />
-          </span>
+          <Logo size={56} className="drop-shadow-[0_10px_30px_rgba(114,41,255,0.35)]" />
           <h1 className="mt-4 text-2xl font-bold tracking-tight">
             Haseeb<span className="text-brand">MadeIt</span> Handbook
           </h1>

@@ -28,9 +28,9 @@ drop policy if exists access_links_admin_all on access_links;
 create policy access_links_admin_all on access_links for all
   using (is_admin()) with check (is_admin());
 
--- Seed one active link per role with a strong random token (idempotent).
+-- Seed one active link per role with a short random token (idempotent).
 insert into access_links (token, role, label)
-select replace(gen_random_uuid()::text, '-', '') || replace(gen_random_uuid()::text, '-', ''),
+select substr(md5(gen_random_uuid()::text || clock_timestamp()::text), 1, 10),
        t.r, t.lbl
 from (values
   ('csr'::user_role,        'CSR team link'),

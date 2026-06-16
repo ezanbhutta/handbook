@@ -10,11 +10,15 @@ export type AccessLink = {
   created_at: string
 }
 
-// 48 hex chars of CSPRNG entropy — an unguessable bearer secret.
+// Short, unguessable token (~58 bits). Uses an alphabet without look-alike
+// characters (no 0/O/1/I/l) so links stay short but stay a strong bearer secret.
+const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'
 export function newToken(): string {
-  const bytes = new Uint8Array(24)
+  const bytes = new Uint8Array(10)
   crypto.getRandomValues(bytes)
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
+  let out = ''
+  for (let i = 0; i < bytes.length; i++) out += ALPHABET[bytes[i] % ALPHABET.length]
+  return out
 }
 
 export function linkUrl(token: string): string {

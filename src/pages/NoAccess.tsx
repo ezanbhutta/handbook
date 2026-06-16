@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Icon } from '@/components/Icon'
+import { Logo } from '@/components/Logo'
 
 export function NoAccess({ invalid = false }: { invalid?: boolean }) {
   return (
     <div className="grid min-h-dvh place-items-center bg-bg px-4 py-10">
       <div className="w-full max-w-md text-center">
-        <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-brand text-brand-fg shadow-brand">
-          <Icon name={invalid ? 'lock' : 'book'} size={30} />
-        </span>
+        <Logo size={64} className="mx-auto drop-shadow-[0_10px_30px_rgba(114,41,255,0.35)]" />
         <h1 className="mt-5 text-2xl font-bold tracking-tight">
           Haseeb<span className="text-brand">MadeIt</span> Handbook
         </h1>
