@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   Design tokens — semantic, theme-able. Values are `R G B` triplets so Tailwind
+   can apply opacity via rgb(var(--token) / <alpha>). Contrast pairs are chosen
+   to clear WCAG AA (4.5:1) for text. Dark theme follows the OS at night.
+   ============================================================================= */
+:root {
+  --color-bg: 248 250 252;          /* slate-50  */
+  --color-surface: 255 255 255;     /* white     */
+  --color-surface-2: 241 245 249;   /* slate-100 */
+  --color-border: 226 232 240;      /* slate-200 */
+  --color-fg: 15 23 42;             /* slate-900 */
+  --color-muted: 71 85 105;         /* slate-600 — 5.9:1 on white */
+
+  --color-brand: 29 78 216;         /* blue-700  */
+  --color-brand-fg: 255 255 255;    /* white on brand — 6.4:1 */
+  --color-brand-soft: 219 234 254;  /* blue-100  */
+
+  --color-success: 22 163 74;       /* green-600 */
+  --color-warning: 180 83 9;        /* amber-700 */
+  --color-danger: 220 38 38;        /* red-600   */
+  --color-danger-soft: 254 226 226; /* red-100   */
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: 2 6 23;             /* slate-950 */
+    --color-surface: 15 23 42;      /* slate-900 */
+    --color-surface-2: 30 41 59;    /* slate-800 */
+    --color-border: 51 65 85;       /* slate-700 */
+    --color-fg: 241 245 249;        /* slate-100 */
+    --color-muted: 148 163 184;     /* slate-400 */
+
+    --color-brand: 96 165 250;      /* blue-400  */
+    --color-brand-fg: 15 23 42;     /* slate-900 on brand */
+    --color-brand-soft: 30 58 138;  /* blue-900  */
+
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-danger: 248 113 113;
+    --color-danger-soft: 69 10 10;
+
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    font-size: 16px; /* brief: 16px base */
+    text-rendering: optimizeLegibility;
+  }
+  /* Visible, consistent keyboard focus everywhere. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-bg;
+  }
+  ::selection {
+    @apply bg-brand/20;
+  }
+  /* Search-result highlights from ts_headline (rendered as <mark>). */
+  mark {
+    @apply rounded bg-brand-soft px-0.5 text-brand;
+  }
+}
+
+@layer components {
+  /* Buttons — min 44px touch target, 200ms transitions. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 min-h-[44px]
+           text-sm font-semibold transition-colors duration-200
+           disabled:opacity-50 disabled:pointer-events-none select-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-brand-fg hover:bg-brand/90 active:bg-brand/80;
+  }
+  .btn-secondary {
+    @apply btn bg-surface-2 text-fg hover:bg-border active:bg-border;
+  }
+  .btn-ghost {
+    @apply btn text-fg hover:bg-surface-2;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-white hover:bg-danger/90;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-border bg-surface px-3.5 min-h-[44px]
+           text-fg placeholder:text-muted transition-colors duration-200
+           focus:border-brand focus:outline-none;
+  }
+  .textarea {
+    @apply input py-3 min-h-[120px] leading-relaxed resize-y;
+  }
+  .label {
+    @apply block text-sm font-medium text-fg mb-1.5;
+  }
+  .hint {
+    @apply text-xs text-muted;
+  }
+
+  .card {
+    @apply rounded-2xl border border-border bg-surface;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1
+           text-xs font-medium bg-surface-2 text-muted;
+  }
+  .chip-brand {
+    @apply chip bg-brand-soft text-brand;
+  }
+}
