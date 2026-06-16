@@ -60,11 +60,12 @@ reader RPCs (`nav_for_token`, `section_for_token`, `search_for_token`, …) that
 take a token, resolve its role, and return only that role's content. The base
 tables deny anonymous reads, so the token is the only way in.
 
-After deploying, sign in and open **Admin → Links** to copy each role's link and
-share it (e.g. the CSR link with CSRs). A link looks like
-`https://your-site/r/<token>`. If a link leaks, hit **Rotate** to invalidate it
-and reshare the new one. The `admin-users` function is now only needed if you
-want to create *additional admin* accounts.
+After deploying, sign in and open **Admin → Links**. Give **each teammate their
+own link** (Add person → name + role). Because links are per-person, if one
+leaks you turn off just that one — everyone else is unaffected. A link looks like
+`https://your-site/r/<token>`. The migration also seeds one shared link per role
+to start; delete those if you prefer pure per-person links. The `admin-users`
+function is now only needed to create *additional admin* accounts.
 
 ## How security works (quick reference)
 
