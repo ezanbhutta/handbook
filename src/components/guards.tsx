@@ -1,36 +1,31 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { useAuth } from '@/lib/auth'
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAccess } from '@/lib/access'
 import { LoadingState } from './States'
 
-// Gate for any authenticated page. While auth resolves we show a spinner so we
-// never flash protected content or bounce to /login prematurely.
+// Any reader — the logged-in founder OR a teammate with a valid role link.
 export function ProtectedRoute() {
-  const { session, profile, loading } = useAuth()
-  const location = useLocation()
-
-  if (loading) {
+  const access = useAccess()
+  if (!access.ready) {
     return (
       <div className="grid min-h-dvh place-items-center">
-        <LoadingState label="Loading your handbook…" />
+        <LoadingState label="Opening your handbook…" />
       </div>
     )
   }
-  if (!session || !profile) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />
-  }
+  if (access.mode === 'none') return <Navigate to="/welcome" replace />
   return <Outlet />
 }
 
-// Admin-only gate (authoring, users, synonyms, insights).
+// Admin-only (authoring, users, synonyms, links, insights).
 export function AdminRoute() {
-  const { isAdmin, loading } = useAuth()
-  if (loading) {
+  const access = useAccess()
+  if (!access.ready) {
     return (
       <div className="grid min-h-dvh place-items-center">
         <LoadingState />
       </div>
     )
   }
-  if (!isAdmin) return <Navigate to="/" replace />
+  if (!access.isAdmin) return <Navigate to="/" replace />
   return <Outlet />
 }

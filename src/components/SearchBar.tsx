@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/lib/auth'
+import { useAccess } from '@/lib/access'
 import { useDebouncedValue, useClickOutside } from '@/lib/hooks'
 import { useSearch, logSearch, logSearchClick, type SearchResult } from '@/lib/queries'
 import { highlightToSafeHtml } from '@/lib/highlight'
@@ -15,7 +15,7 @@ type Props = {
 
 export function SearchBar({ size = 'md', autoFocus = false, placeholder }: Props) {
   const navigate = useNavigate()
-  const { profile } = useAuth()
+  const { token } = useAccess()
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
@@ -30,13 +30,13 @@ export function SearchBar({ size = 'md', autoFocus = false, placeholder }: Props
   const trimmed = debounced.trim()
   const showDropdown = open && trimmed.length >= 2
 
-  // Silent search logging — one row per executed query (brief §5).
+  // Silent search logging — one row per executed reader query (brief §5).
+  // In admin mode token is null, so this is a no-op.
   useEffect(() => {
-    if (!profile || trimmed.length < 2) return
+    if (trimmed.length < 2 || isFetching) return
     if (loggedRef.current.query === trimmed) return
-    if (isFetching) return
     loggedRef.current = { query: trimmed, id: null }
-    void logSearch(profile.id, trimmed, results.length).then((id) => {
+    void logSearch(token, trimmed, results.length).then((id) => {
       if (loggedRef.current.query === trimmed) loggedRef.current.id = id
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,7 +46,7 @@ export function SearchBar({ size = 'md', autoFocus = false, placeholder }: Props
 
   function go(result: SearchResult) {
     if (loggedRef.current.query === trimmed && loggedRef.current.id) {
-      void logSearchClick(loggedRef.current.id, result.section_id)
+      void logSearchClick(token, loggedRef.current.id, result.section_id)
     }
     setOpen(false)
     setQuery('')

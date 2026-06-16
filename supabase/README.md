@@ -13,7 +13,8 @@ supabase/
 │   ├── 0002_security.sql   RLS helper functions + policies
 │   ├── 0003_rpc.sql        get_navigation() + search_handbook()
 │   ├── 0004_seed.sql       12 chapters + starter synonyms
-│   └── 0005_storage.sql    section-image bucket + policies
+│   ├── 0005_storage.sql    section-image bucket + policies
+│   └── 0006_access_links.sql  no-login role links + reader RPCs
 └── functions/
     └── admin-users/        privileged user management (service-role only)
 ```
@@ -50,8 +51,20 @@ very first admin is provisioned by hand.
    values ('PASTE-AUTH-USER-UUID', 'Haseeb', 'manager', true, true);
    ```
 
-That account can now sign in, reach `/admin`, and create everyone else from
-**Admin → Users** (which calls the `admin-users` function).
+That account can now sign in and reach `/admin`.
+
+## Team access — role links (no login)
+
+Migration `0006` seeds one secret link per role and exposes `SECURITY DEFINER`
+reader RPCs (`nav_for_token`, `section_for_token`, `search_for_token`, …) that
+take a token, resolve its role, and return only that role's content. The base
+tables deny anonymous reads, so the token is the only way in.
+
+After deploying, sign in and open **Admin → Links** to copy each role's link and
+share it (e.g. the CSR link with CSRs). A link looks like
+`https://your-site/r/<token>`. If a link leaks, hit **Rotate** to invalidate it
+and reshare the new one. The `admin-users` function is now only needed if you
+want to create *additional admin* accounts.
 
 ## How security works (quick reference)
 

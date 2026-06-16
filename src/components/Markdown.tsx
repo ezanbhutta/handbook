@@ -13,7 +13,7 @@ const components: Components = {
     </h2>
   ),
   h3: ({ children }) => <h3 className="mt-6 mb-2 text-lg font-semibold">{children}</h3>,
-  p: ({ children }) => <p className="my-3.5 leading-7 text-fg/90">{children}</p>,
+  p: ({ children }) => <p className="my-4 text-fg/90">{children}</p>,
   a: ({ href, children }) => (
     <a
       href={href}
@@ -26,7 +26,7 @@ const components: Components = {
   ),
   ul: ({ children }) => <ul className="my-3.5 ml-5 list-disc space-y-1.5 marker:text-muted">{children}</ul>,
   ol: ({ children }) => <ol className="my-3.5 ml-5 list-decimal space-y-1.5 marker:text-muted">{children}</ol>,
-  li: ({ children }) => <li className="leading-7 pl-1">{children}</li>,
+  li: ({ children }) => <li className="pl-1">{children}</li>,
   blockquote: ({ children }) => (
     <blockquote className="my-4 border-l-4 border-brand/40 bg-surface-2 rounded-r-xl px-4 py-2 text-fg/80">
       {children}
@@ -68,7 +68,7 @@ const components: Components = {
 
 export function Markdown({ children }: { children: string }) {
   return (
-    <div className="text-[16px]">
+    <div className="prose-body text-fg">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSanitize]}

@@ -7,6 +7,7 @@ const TABS: { to: string; label: string; icon: IconName; end?: boolean }[] = [
   { to: '/admin', label: 'Overview', icon: 'home', end: true },
   { to: '/admin/chapters', label: 'Chapters', icon: 'list' },
   { to: '/admin/sections', label: 'Sections', icon: 'book' },
+  { to: '/admin/links', label: 'Links', icon: 'link' },
   { to: '/admin/synonyms', label: 'Synonyms', icon: 'search' },
   { to: '/admin/users', label: 'Users', icon: 'users' },
   { to: '/admin/insights', label: 'Insights', icon: 'sparkles' },

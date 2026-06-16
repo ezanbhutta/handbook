@@ -3,50 +3,75 @@
 @tailwind utilities;
 
 /* =============================================================================
-   Design tokens — semantic, theme-able. Values are `R G B` triplets so Tailwind
-   can apply opacity via rgb(var(--token) / <alpha>). Contrast pairs are chosen
-   to clear WCAG AA (4.5:1) for text. Dark theme follows the OS at night.
+   HaseebMadeIt design system — violet brand, three reading themes.
+   Tokens are `R G B` triplets so Tailwind applies opacity via
+   rgb(var(--token) / <alpha>). Day is the default; Night and Reading override.
+   Text/background pairs are chosen for comfortable long-form reading.
    ============================================================================= */
-:root {
-  --color-bg: 248 250 252;          /* slate-50  */
-  --color-surface: 255 255 255;     /* white     */
-  --color-surface-2: 241 245 249;   /* slate-100 */
-  --color-border: 226 232 240;      /* slate-200 */
-  --color-fg: 15 23 42;             /* slate-900 */
-  --color-muted: 71 85 105;         /* slate-600 — 5.9:1 on white */
+:root,
+[data-theme='day'] {
+  --color-bg: 250 250 254;          /* #FAFAFE barely-tinted canvas */
+  --color-surface: 255 255 255;     /* white cards */
+  --color-surface-2: 244 242 250;   /* #F4F2FA raised */
+  --color-border: 232 229 243;      /* #E8E5F3 */
+  --color-fg: 22 10 51;             /* #160A33 deep brand ink */
+  --color-muted: 83 74 120;         /* #534A78 — 7.5:1 on white */
 
-  --color-brand: 29 78 216;         /* blue-700  */
-  --color-brand-fg: 255 255 255;    /* white on brand — 6.4:1 */
-  --color-brand-soft: 219 234 254;  /* blue-100  */
+  --color-brand: 114 41 255;        /* #7229FF */
+  --color-brand-fg: 255 255 255;
+  --color-brand-soft: 241 235 255;  /* #F1EBFF */
 
-  --color-success: 22 163 74;       /* green-600 */
-  --color-warning: 180 83 9;        /* amber-700 */
-  --color-danger: 220 38 38;        /* red-600   */
-  --color-danger-soft: 254 226 226; /* red-100   */
+  --color-success: 5 150 105;
+  --color-warning: 180 83 9;
+  --color-danger: 220 38 38;
+  --color-danger-soft: 253 233 233;
+
+  --font-prose: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --reading-measure: 42rem;
 
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: 2 6 23;             /* slate-950 */
-    --color-surface: 15 23 42;      /* slate-900 */
-    --color-surface-2: 30 41 59;    /* slate-800 */
-    --color-border: 51 65 85;       /* slate-700 */
-    --color-fg: 241 245 249;        /* slate-100 */
-    --color-muted: 148 163 184;     /* slate-400 */
+[data-theme='night'] {
+  --color-bg: 11 6 24;              /* #0B0618 */
+  --color-surface: 22 10 51;        /* #160A33 brand ink */
+  --color-surface-2: 34 20 66;      /* #221542 */
+  --color-border: 49 34 84;         /* #312254 */
+  --color-fg: 240 238 250;          /* #F0EEFA */
+  --color-muted: 167 158 200;       /* #A79EC8 */
 
-    --color-brand: 96 165 250;      /* blue-400  */
-    --color-brand-fg: 15 23 42;     /* slate-900 on brand */
-    --color-brand-soft: 30 58 138;  /* blue-900  */
+  --color-brand: 159 102 255;       /* #9F66FF glow */
+  --color-brand-fg: 22 10 51;
+  --color-brand-soft: 42 26 77;     /* #2A1A4D */
 
-    --color-success: 34 197 94;
-    --color-warning: 245 158 11;
-    --color-danger: 248 113 113;
-    --color-danger-soft: 69 10 10;
+  --color-success: 52 211 153;
+  --color-warning: 251 191 36;
+  --color-danger: 248 113 113;
+  --color-danger-soft: 61 18 24;
 
-    color-scheme: dark;
-  }
+  color-scheme: dark;
+}
+
+[data-theme='reading'] {
+  --color-bg: 245 238 224;          /* #F5EEE0 warm paper */
+  --color-surface: 251 246 235;     /* #FBF6EB */
+  --color-surface-2: 238 230 214;   /* #EEE6D6 */
+  --color-border: 226 215 192;      /* #E2D7C0 */
+  --color-fg: 59 50 38;             /* #3B3226 warm ink */
+  --color-muted: 122 107 84;        /* #7A6B54 */
+
+  --color-brand: 109 40 217;        /* #6D28D9 — reads well on cream */
+  --color-brand-fg: 255 255 255;
+  --color-brand-soft: 237 228 252;  /* #EDE4FC */
+
+  --color-success: 21 128 61;
+  --color-warning: 180 83 9;
+  --color-danger: 185 28 28;
+  --color-danger-soft: 245 224 214;
+
+  --font-prose: 'Lora', Georgia, 'Times New Roman', serif;
+
+  color-scheme: light;
 }
 
 @layer base {
@@ -55,40 +80,49 @@
   }
   body {
     @apply bg-bg text-fg font-sans antialiased;
-    font-size: 16px; /* brief: 16px base */
+    font-size: 16px;
     text-rendering: optimizeLegibility;
   }
-  /* Visible, consistent keyboard focus everywhere. */
+  /* Smooth, layout-free transitions when switching themes. */
+  body,
+  .card,
+  .btn,
+  .input,
+  .chip,
+  header,
+  aside,
+  [data-theme] {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  }
   :focus-visible {
     @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-bg;
   }
   ::selection {
     @apply bg-brand/20;
   }
-  /* Search-result highlights from ts_headline (rendered as <mark>). */
   mark {
     @apply rounded bg-brand-soft px-0.5 text-brand;
   }
 }
 
 @layer components {
-  /* Buttons — min 44px touch target, 200ms transitions. */
+  /* Buttons — min 44px touch target. */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 min-h-[44px]
            text-sm font-semibold transition-colors duration-200
            disabled:opacity-50 disabled:pointer-events-none select-none;
   }
   .btn-primary {
-    @apply btn bg-brand text-brand-fg hover:bg-brand/90 active:bg-brand/80;
+    @apply btn bg-brand text-brand-fg hover:opacity-90 active:opacity-80 shadow-brand;
   }
   .btn-secondary {
-    @apply btn bg-surface-2 text-fg hover:bg-border active:bg-border;
+    @apply btn bg-surface-2 text-fg hover:bg-border;
   }
   .btn-ghost {
     @apply btn text-fg hover:bg-surface-2;
   }
   .btn-danger {
-    @apply btn bg-danger text-white hover:bg-danger/90;
+    @apply btn bg-danger text-white hover:opacity-90;
   }
 
   .input {
@@ -116,5 +150,18 @@
   }
   .chip-brand {
     @apply chip bg-brand-soft text-brand;
+  }
+
+  /* Long-form reading column: generous measure, leading, and serif in
+     Reading mode. Tuned after top docs/readers (GitBook, Stripe, Readwise). */
+  .prose-body {
+    font-family: var(--font-prose);
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.78;
+  }
+  [data-theme='reading'] .prose-body {
+    font-size: 1.1875rem; /* 19px */
+    line-height: 1.85;
+    letter-spacing: 0.003em;
   }
 }

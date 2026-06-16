@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useAuth } from '@/lib/auth'
+import { useAccess } from '@/lib/access'
 import { useDebouncedValue } from '@/lib/hooks'
 import { useSearch, logSearch, logSearchClick } from '@/lib/queries'
 import { highlightToSafeHtml } from '@/lib/highlight'
@@ -8,7 +8,7 @@ import { Icon } from '@/components/Icon'
 import { LoadingState, EmptyState } from '@/components/States'
 
 export function SearchPage() {
-  const { profile } = useAuth()
+  const { token } = useAccess()
   const [params, setParams] = useSearchParams()
   const initial = params.get('q') ?? ''
   const [input, setInput] = useState(initial)
@@ -23,12 +23,12 @@ export function SearchPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trimmed])
 
-  // Silent logging — one row per executed query.
+  // Silent logging — one row per executed reader query (no-op in admin mode).
   useEffect(() => {
-    if (!profile || trimmed.length < 2 || isFetching) return
+    if (trimmed.length < 2 || isFetching) return
     if (loggedRef.current.query === trimmed) return
     loggedRef.current = { query: trimmed, id: null }
-    void logSearch(profile.id, trimmed, results.length).then((id) => {
+    void logSearch(token, trimmed, results.length).then((id) => {
       if (loggedRef.current.query === trimmed) loggedRef.current.id = id
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,7 +36,7 @@ export function SearchPage() {
 
   function onClickResult(sectionId: string) {
     if (loggedRef.current.query === trimmed && loggedRef.current.id) {
-      void logSearchClick(loggedRef.current.id, sectionId)
+      void logSearchClick(token, loggedRef.current.id, sectionId)
     }
   }
 

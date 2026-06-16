@@ -35,6 +35,15 @@ export default {
           'Arial',
           'sans-serif',
         ],
+        serif: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+      },
+      boxShadow: {
+        // Deep indigo-tinted elevation — the HaseebMadeIt soft-shadow feel.
+        brand: '0 14px 40px -12px rgba(22, 10, 51, 0.22)',
+        soft: '0 2px 12px rgba(22, 10, 51, 0.06)',
+      },
+      maxWidth: {
+        reading: '42rem',
       },
       borderRadius: {
         xl: '0.875rem',

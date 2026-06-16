@@ -1,15 +1,18 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useAccess } from '@/lib/access'
+import { roleLabel } from '@/lib/roles'
 import { Icon } from './Icon'
 import { SearchBar } from './SearchBar'
 import { NavTree } from './NavTree'
 import { UserMenu } from './UserMenu'
+import { ThemeSwitcher } from './ThemeSwitcher'
 import { LoadingState } from './States'
 
 function Brand() {
   return (
     <Link to="/" className="flex items-center gap-2.5" aria-label="HaseebMadeIt Handbook — home">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-brand-fg">
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-brand-fg shadow-brand">
         <Icon name="book" size={20} />
       </span>
       <span className="text-base font-bold tracking-tight">
@@ -19,14 +22,23 @@ function Brand() {
   )
 }
 
+function RoleBadge() {
+  const { role, label } = useAccess()
+  if (!role) return null
+  return (
+    <span className="chip-brand" title={label ?? undefined}>
+      <Icon name="badge" size={14} />
+      {roleLabel(role)}
+    </span>
+  )
+}
+
 export function Layout() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const location = useLocation()
+  const { mode } = useAccess()
 
-  // Close the mobile drawer whenever the route changes.
   useEffect(() => setDrawerOpen(false), [location.pathname])
-
-  // Lock body scroll while the drawer is open.
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : ''
     return () => {
@@ -53,7 +65,10 @@ export function Layout() {
             <SearchBar />
           </div>
 
-          <div className="ml-auto flex items-center gap-1 md:ml-0">
+          <div className="ml-auto flex items-center gap-1.5 md:ml-0">
+            <div className="hidden sm:block">
+              <ThemeSwitcher />
+            </div>
             <Link
               to="/search"
               aria-label="Search"
@@ -61,13 +76,12 @@ export function Layout() {
             >
               <Icon name="search" />
             </Link>
-            <UserMenu />
+            {mode === 'authed' ? <UserMenu /> : <RoleBadge />}
           </div>
         </div>
       </header>
 
       <div className="mx-auto flex max-w-7xl gap-6 px-3 sm:px-5">
-        {/* Desktop sidebar */}
         <aside className="hidden w-64 shrink-0 lg:block">
           <div className="sticky top-[4.5rem] max-h-[calc(100dvh-5.5rem)] overflow-y-auto py-5 pr-1">
             <NavTree />
@@ -81,7 +95,6 @@ export function Layout() {
         </main>
       </div>
 
-      {/* Mobile drawer */}
       {drawerOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
@@ -101,11 +114,14 @@ export function Layout() {
                 <Icon name="close" />
               </button>
             </div>
-            <div className="overflow-y-auto p-3">
+            <div className="flex-1 overflow-y-auto p-3">
               <div className="mb-3">
                 <SearchBar />
               </div>
               <NavTree onNavigate={() => setDrawerOpen(false)} />
+            </div>
+            <div className="border-t border-border p-3">
+              <ThemeSwitcher />
             </div>
           </div>
         </div>

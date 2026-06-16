@@ -1,17 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from './supabase'
-import type { Database, UserRole } from './database.types'
+import { useAccess } from './access'
+import type { Database, UserRole, ChangeType } from './database.types'
 
 export type Chapter = Database['public']['Tables']['chapters']['Row']
 export type Section = Database['public']['Tables']['sections']['Row']
 export type ChangeLogEntry = Database['public']['Tables']['change_log']['Row']
-// Enriched with the current section slug (when the section still exists and is
-// visible) so entries can link straight to the section.
-export type ChangeLogEntryWithSlug = ChangeLogEntry & {
-  section: { slug: string } | null
-}
 export type SearchResult = Database['public']['Functions']['search_handbook']['Returns'][number]
 
+// ---- Normalized view shapes (same for the admin and reader paths) -----------
 export type NavSection = { id: string; title: string; slug: string; order: number }
 export type NavChapter = {
   id: string
@@ -22,13 +19,57 @@ export type NavChapter = {
   description: string | null
   sections: NavSection[]
 }
+export type ChapterView = {
+  id: string
+  title: string
+  slug: string
+  description: string | null
+  icon: string | null
+}
+export type SectionListItem = {
+  id: string
+  title: string
+  slug: string
+  order_index: number
+  show_in_onboarding: boolean
+}
+export type SectionView = {
+  id: string
+  title: string
+  slug: string
+  body: string
+  video_url: string | null
+  allowed_roles: UserRole[]
+  show_in_onboarding: boolean
+  updated_at: string
+  chapters: { title: string; slug: string } | null
+}
+export type ChangeView = {
+  id: string
+  section_title: string | null
+  type: ChangeType
+  summary: string
+  created_at: string
+  section: { slug: string } | null
+}
+export type OnboardingSection = {
+  id: string
+  title: string
+  slug: string
+  chapters: { title: string; slug: string } | null
+}
 
-// ---- Navigation (permission-filtered tree) ----------------------------------
+// ---- Navigation -------------------------------------------------------------
 export function useNavigation() {
+  const access = useAccess()
   return useQuery({
-    queryKey: ['navigation'],
+    enabled: access.ready && access.mode !== 'none',
+    queryKey: ['navigation', access.mode, access.role, access.token],
     queryFn: async (): Promise<NavChapter[]> => {
-      const { data, error } = await supabase.rpc('get_navigation')
+      const { data, error } =
+        access.mode === 'token'
+          ? await supabase.rpc('nav_for_token', { p_token: access.token! })
+          : await supabase.rpc('get_navigation')
       if (error) throw error
 
       const byChapter = new Map<string, NavChapter>()
@@ -60,94 +101,194 @@ export function useNavigation() {
 
 // ---- A chapter + its visible sections ---------------------------------------
 export function useChapter(slug: string | undefined) {
+  const access = useAccess()
   return useQuery({
-    enabled: Boolean(slug),
-    queryKey: ['chapter', slug],
-    queryFn: async () => {
+    enabled: Boolean(slug) && access.ready && access.mode !== 'none',
+    queryKey: ['chapter', slug, access.mode, access.role, access.token],
+    queryFn: async (): Promise<{ chapter: ChapterView; sections: SectionListItem[] } | null> => {
+      if (access.mode === 'token') {
+        const [chapterRes, sectionsRes] = await Promise.all([
+          supabase.rpc('chapter_for_token', { p_token: access.token!, p_slug: slug! }),
+          supabase.rpc('chapter_sections_for_token', { p_token: access.token!, p_slug: slug! }),
+        ])
+        if (chapterRes.error) throw chapterRes.error
+        if (sectionsRes.error) throw sectionsRes.error
+        const c = chapterRes.data?.[0]
+        if (!c) return null
+        return {
+          chapter: { id: c.id, title: c.title, slug: c.slug, description: c.description, icon: c.icon },
+          sections: (sectionsRes.data ?? []).map((s) => ({
+            id: s.id,
+            title: s.title,
+            slug: s.slug,
+            order_index: s.order_index,
+            show_in_onboarding: s.show_in_onboarding,
+          })),
+        }
+      }
+
       const { data: chapter, error } = await supabase
         .from('chapters')
-        .select('*')
+        .select('id, title, slug, description, icon')
         .eq('slug', slug!)
         .maybeSingle()
       if (error) throw error
       if (!chapter) return null
-
       const { data: sections, error: sErr } = await supabase
         .from('sections')
         .select('id, title, slug, order_index, show_in_onboarding')
         .eq('chapter_id', chapter.id)
         .order('order_index')
       if (sErr) throw sErr
-
       return { chapter, sections: sections ?? [] }
     },
   })
 }
 
-// ---- A single section (with its chapter) ------------------------------------
+// ---- A single section -------------------------------------------------------
 export function useSection(slug: string | undefined) {
+  const access = useAccess()
   return useQuery({
-    enabled: Boolean(slug),
-    queryKey: ['section', slug],
-    queryFn: async () => {
+    enabled: Boolean(slug) && access.ready && access.mode !== 'none',
+    queryKey: ['section', slug, access.mode, access.role, access.token],
+    queryFn: async (): Promise<SectionView | null> => {
+      if (access.mode === 'token') {
+        const { data, error } = await supabase.rpc('section_for_token', {
+          p_token: access.token!,
+          p_slug: slug!,
+        })
+        if (error) throw error
+        const s = data?.[0]
+        if (!s) return null
+        return {
+          id: s.id,
+          title: s.title,
+          slug: s.slug,
+          body: s.body,
+          video_url: s.video_url,
+          allowed_roles: s.allowed_roles,
+          show_in_onboarding: s.show_in_onboarding,
+          updated_at: s.updated_at,
+          chapters: { title: s.chapter_title, slug: s.chapter_slug },
+        }
+      }
+
       const { data, error } = await supabase
         .from('sections')
         .select('*, chapters(title, slug)')
         .eq('slug', slug!)
         .maybeSingle()
       if (error) throw error
-      return data as unknown as
-        | (Section & { chapters: { title: string; slug: string } | null })
-        | null
+      if (!data) return null
+      const row = data as unknown as Section & { chapters: { title: string; slug: string } | null }
+      return {
+        id: row.id,
+        title: row.title,
+        slug: row.slug,
+        body: row.body,
+        video_url: row.video_url,
+        allowed_roles: row.allowed_roles,
+        show_in_onboarding: row.show_in_onboarding,
+        updated_at: row.updated_at,
+        chapters: row.chapters,
+      }
     },
   })
 }
 
-// ---- What's New: the single latest entry the viewer may see (the banner) -----
+// ---- What's New: latest entry (the banner) ----------------------------------
+function mapChangeRow(row: {
+  id: string
+  section_title: string | null
+  type: ChangeType
+  summary: string
+  created_at: string
+  section_slug?: string | null
+}): ChangeView {
+  return {
+    id: row.id,
+    section_title: row.section_title,
+    type: row.type,
+    summary: row.summary,
+    created_at: row.created_at,
+    section: row.section_slug ? { slug: row.section_slug } : null,
+  }
+}
+
 export function useLatestChange() {
+  const access = useAccess()
   return useQuery({
-    queryKey: ['change_log', 'latest'],
-    queryFn: async (): Promise<ChangeLogEntryWithSlug | null> => {
+    enabled: access.ready && access.mode !== 'none',
+    queryKey: ['change_log', 'latest', access.mode, access.role, access.token],
+    queryFn: async (): Promise<ChangeView | null> => {
+      if (access.mode === 'token') {
+        const { data, error } = await supabase.rpc('latest_change_for_token', {
+          p_token: access.token!,
+        })
+        if (error) throw error
+        return data?.[0] ? mapChangeRow(data[0]) : null
+      }
       const { data, error } = await supabase
         .from('change_log')
-        .select('*, section:sections(slug)')
+        .select('id, section_title, type, summary, created_at, section:sections(slug)')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()
       if (error) throw error
-      return data as unknown as ChangeLogEntryWithSlug | null
+      if (!data) return null
+      const row = data as unknown as {
+        id: string
+        section_title: string | null
+        type: ChangeType
+        summary: string
+        created_at: string
+        section: { slug: string } | null
+      }
+      return { ...row }
     },
   })
 }
 
-// ---- What's New: the full, permission-filtered history (Chapter 12) ----------
+// ---- What's New: full history (Chapter 12) ----------------------------------
 export function useChangeLog() {
+  const access = useAccess()
   return useQuery({
-    queryKey: ['change_log', 'all'],
-    queryFn: async (): Promise<ChangeLogEntryWithSlug[]> => {
+    enabled: access.ready && access.mode !== 'none',
+    queryKey: ['change_log', 'all', access.mode, access.role, access.token],
+    queryFn: async (): Promise<ChangeView[]> => {
+      if (access.mode === 'token') {
+        const { data, error } = await supabase.rpc('changelog_for_token', { p_token: access.token! })
+        if (error) throw error
+        return (data ?? []).map(mapChangeRow)
+      }
       const { data, error } = await supabase
         .from('change_log')
-        .select('*, section:sections(slug)')
+        .select('id, section_title, type, summary, created_at, section:sections(slug)')
         .order('created_at', { ascending: false })
         .limit(200)
       if (error) throw error
-      return (data ?? []) as unknown as ChangeLogEntryWithSlug[]
+      return (data ?? []) as unknown as ChangeView[]
     },
   })
 }
 
-// ---- "Start Here for [role]" onboarding list --------------------------------
-export type OnboardingSection = {
-  id: string
-  title: string
-  slug: string
-  chapters: { title: string; slug: string } | null
-}
-export function useOnboarding(enabled: boolean) {
+// ---- "Start Here" onboarding list -------------------------------------------
+export function useOnboarding() {
+  const access = useAccess()
   return useQuery({
-    enabled,
-    queryKey: ['onboarding'],
+    enabled: access.ready && access.mode !== 'none',
+    queryKey: ['onboarding', access.mode, access.role, access.token],
     queryFn: async (): Promise<OnboardingSection[]> => {
+      if (access.mode === 'token') {
+        const { data, error } = await supabase.rpc('onboarding_for_token', { p_token: access.token! })
+        if (error) throw error
+        return (data ?? []).map((s) => ({
+          id: s.id,
+          title: s.title,
+          slug: s.slug,
+          chapters: { title: s.chapter_title, slug: s.chapter_slug },
+        }))
+      }
       const { data, error } = await supabase
         .from('sections')
         .select('id, title, slug, chapters(title, slug)')
@@ -159,14 +300,18 @@ export function useOnboarding(enabled: boolean) {
   })
 }
 
-// ---- Search (V1: typo + keyword + synonym, RLS-aware) -----------------------
+// ---- Search (typo + keyword + synonym, role-filtered) -----------------------
 export function useSearch(query: string) {
+  const access = useAccess()
   const q = query.trim()
   return useQuery({
-    enabled: q.length >= 2,
-    queryKey: ['search', q],
+    enabled: q.length >= 2 && access.ready && access.mode !== 'none',
+    queryKey: ['search', q, access.mode, access.role, access.token],
     queryFn: async (): Promise<SearchResult[]> => {
-      const { data, error } = await supabase.rpc('search_handbook', { q })
+      const { data, error } =
+        access.mode === 'token'
+          ? await supabase.rpc('search_for_token', { p_token: access.token!, q })
+          : await supabase.rpc('search_handbook', { q })
       if (error) throw error
       return data ?? []
     },
@@ -174,26 +319,30 @@ export function useSearch(query: string) {
   })
 }
 
-// ---- Silent search logging (raw material for the future Gap Report) ---------
-// No SELECT policy for non-admins, so we mint the row id locally instead of
-// relying on INSERT ... RETURNING. Everything here is fire-and-forget.
+// ---- Silent search logging (readers only — they're the Gap Report signal) ---
 export async function logSearch(
-  userId: string,
+  token: string | null,
   query: string,
   resultsCount: number,
 ): Promise<string | null> {
-  const id = crypto.randomUUID()
-  const { error } = await supabase.from('search_log').insert({
-    id,
-    user_id: userId,
-    query_text: query,
-    results_count: resultsCount,
+  if (!token) return null
+  const { data } = await supabase.rpc('log_search', {
+    p_token: token,
+    p_query: query,
+    p_count: resultsCount,
   })
-  return error ? null : id
+  return (data as string | null) ?? null
 }
 
-export async function logSearchClick(logId: string, sectionId: string): Promise<void> {
-  await supabase.from('search_log').update({ clicked_section_id: sectionId }).eq('id', logId)
+export async function logSearchClick(
+  token: string | null,
+  logId: string,
+  sectionId: string,
+): Promise<void> {
+  if (!token) return
+  await supabase.rpc('log_search_click', {
+    p_token: token,
+    p_log_id: logId,
+    p_section_id: sectionId,
+  })
 }
-
-export type { UserRole }
