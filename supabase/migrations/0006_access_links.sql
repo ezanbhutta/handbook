@@ -30,7 +30,7 @@ create policy access_links_admin_all on access_links for all
 
 -- Seed one active link per role with a short random token (idempotent).
 insert into access_links (token, role, label)
-select substr(md5(gen_random_uuid()::text || clock_timestamp()::text), 1, 10),
+select substr(md5(gen_random_uuid()::text || clock_timestamp()::text), 1, 6),
        t.r, t.lbl
 from (values
   ('csr'::user_role,        'CSR team link'),

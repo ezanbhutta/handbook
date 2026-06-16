@@ -10,11 +10,12 @@ export type AccessLink = {
   created_at: string
 }
 
-// Short, unguessable token (~58 bits). Uses an alphabet without look-alike
-// characters (no 0/O/1/I/l) so links stay short but stay a strong bearer secret.
+// Short, unguessable-enough token. Uses an alphabet without look-alike
+// characters (no 0/O/1/I/l) so links stay short and easy to read/type. 6 chars
+// of this alphabet is ~35 bits — fine for a read-only, rotatable handbook link.
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'
 export function newToken(): string {
-  const bytes = new Uint8Array(10)
+  const bytes = new Uint8Array(6)
   crypto.getRandomValues(bytes)
   let out = ''
   for (let i = 0; i < bytes.length; i++) out += ALPHABET[bytes[i] % ALPHABET.length]
