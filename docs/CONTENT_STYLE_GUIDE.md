@@ -96,14 +96,16 @@ phrasing where it's strong ("Always help, never sell").
 
 ## Visibility (who sees what)
 
-Default open, restrict by exception:
+Roles: `csr`, `asr`, `hr`, `pm`, `manager`, `office_boy`. **CSR and ASR are
+separate roles** — don't bundle them. Default open, restrict by exception:
 
 - **Everyone (all six roles):** welcome, company/org, conduct & culture,
   attendance, security basics, emergencies, glossary.
-- **Team (all except Office Boy):** job descriptions, the CSR SOPs/playbook,
-  tools (ClickUp), payroll/bonus.
-- **Tighter:** restrict a section to specific roles only when it's genuinely
-  sensitive to others.
+- **Manager always has full access** — include `manager` in every section.
+- **CSR content** (CSR job descriptions, the SOPs/playbook, ClickUp, bonus):
+  `csr, hr, pm, manager`.
+- **ASR content:** scoped to `asr` (+ `hr, pm, manager`) when it's added.
+- **Tighter:** restrict to specific roles only when it's genuinely sensitive.
 
 Flag onboarding-critical sections with **Start Here** so new hires see them first.
 
