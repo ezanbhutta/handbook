@@ -4,9 +4,12 @@
 -- Reformatted for scannability (action-first steps, callouts, cross-links) and
 -- enriched with "In short" summaries + helping points.
 --
--- Visibility: "Everyone" = all six roles; "Team" = all except office_boy.
+-- Visibility model:
+--   "Everyone"  = all six roles (welcome, company/org).
+--   CSR content = csr + hr + pm + manager. CSR and ASR are SEPARATE roles, so
+--                 ASR is not included here — it gets its own content later.
+--   Manager has full data access (it appears in every section's allowed_roles).
 -- Idempotent: re-running upserts each section by slug (edit + re-run to update).
--- Assumptions to confirm: Senior CSR = ASR role; Team Leaders = Manager.
 -- =============================================================================
 
 -- ===== CHAPTER 1 · Welcome & Company ========================================
@@ -93,7 +96,7 @@ select (select id from chapters where slug='your-role'),
 
 > **Rule:** If something is confusing or sensitive, discuss it with a Senior. Never tackle a difficult case alone.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], true, 1
+  array['csr','hr','pm','manager']::user_role[], true, 1
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -118,7 +121,7 @@ select (select id from chapters where slug='your-role'),
 
 > **Helping point:** Seniors score CSRs each quarter on observable evidence — see the [Quarterly Bonus Policy](/section/quarterly-bonus-policy). Give monthly feedback so the quarterly review holds no surprises.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 2
+  array['csr','hr','pm','manager']::user_role[], false, 2
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -143,7 +146,7 @@ select (select id from chapters where slug='your-role'),
 
 > **Helping point:** The PM is the bridge between sales (CSRs) and production (designers). When in doubt, protect the **delivery deadline** and the **brief quality** — both directly affect the client experience.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 3
+  array['csr','hr','pm','manager']::user_role[], false, 3
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -176,7 +179,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Helping point:** The three rules that protect us most: **5-minute replies**, **everything in ClickUp**, and **QC before every delivery**.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], true, 1
+  array['csr','hr','pm','manager']::user_role[], true, 1
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -198,7 +201,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 **Helping point:** A two-minute profile read prevents most mistakes — wrong style, missed revision, repeated questions. Start every interaction here.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 2
+  array['csr','hr','pm','manager']::user_role[], false, 2
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -220,7 +223,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 **Helping point:** Keep 2–3 polite holding messages ready (e.g., "Thanks for your message — I'm reviewing your case and will update you shortly.") so you never miss the 5-minute mark.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 3
+  array['csr','hr','pm','manager']::user_role[], false, 3
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -242,7 +245,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 **Helping point:** See [Tools → ClickUp basics](/section/clickup-basics) for the status labels we use.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 4
+  array['csr','hr','pm','manager']::user_role[], false, 4
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -265,7 +268,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 **Helping point:** A 30-second brief checklist (size · format · colors · references · copy · deadline) prevents most back-and-forth.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 5
+  array['csr','hr','pm','manager']::user_role[], false, 5
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -286,7 +289,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Rule:** Never deliver a revised design before reviewing it yourself and confirming every requested change is addressed (see [SOP 07](/section/sop-07-quality-check)).
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 6
+  array['csr','hr','pm','manager']::user_role[], false, 6
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -308,7 +311,7 @@ select (select id from chapters where slug='fiverr-ops'),
 - Write in clear, professional English — no slang, abbreviations, or vague entries.
 - A Senior who's never worked the client should get the complete picture from the remarks.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 7
+  array['csr','hr','pm','manager']::user_role[], false, 7
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -333,7 +336,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Rule:** If even one item fails, return the file to the designer before delivery. No exceptions — not for tight deadlines, not for any reason. The brand image is everything.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 8
+  array['csr','hr','pm','manager']::user_role[], false, 8
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -355,7 +358,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Standard:** Delivery messages always include the **Google Drive link + ZIP**, with the line: *"If the ZIP file does not open, please use the Google Drive link — it's the same in both places."*
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 9
+  array['csr','hr','pm','manager']::user_role[], false, 9
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -379,7 +382,7 @@ select (select id from chapters where slug='fiverr-ops'),
 - The file extension must match the actual file format.
 - **Never overwrite** a previous version — always create a new file with the updated version number.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 10
+  array['csr','hr','pm','manager']::user_role[], false, 10
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -406,7 +409,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Rule:** Escalating is never a sign of weakness — it's the professional move when a situation exceeds your scope. Never tackle sensitive cases alone.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 11
+  array['csr','hr','pm','manager']::user_role[], false, 11
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -431,7 +434,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Important:** The goal is long-term relationships, not short-term sales. A client who trusts us returns and spends far more over time than any single upsell.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 12
+  array['csr','hr','pm','manager']::user_role[], false, 12
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -455,7 +458,7 @@ select (select id from chapters where slug='fiverr-ops'),
 - When a project completes, thank them genuinely and invite future contact — without a selling tone.
 - Never pressure a client to leave a review or place a new order. **Always help, never sell** — show value and you'll see the results.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 13
+  array['csr','hr','pm','manager']::user_role[], false, 13
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -475,7 +478,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Rule:** No CSR may process a cancellation or issue a refund independently. Always escalate. Always.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 14
+  array['csr','hr','pm','manager']::user_role[], false, 14
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -500,7 +503,7 @@ select (select id from chapters where slug='fiverr-ops'),
 
 > **Rule:** The DAR is submitted to your Senior by the end of every shift, without exception. Inconsistent or incomplete reporting is a performance issue.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 15
+  array['csr','hr','pm','manager']::user_role[], false, 15
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -530,7 +533,7 @@ select (select id from chapters where slug='tools'),
 
 **Helping point:** Before you leave your desk, do a 60-second sweep — every task in the right status with a current remark.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 1
+  array['csr','hr','pm','manager']::user_role[], false, 1
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
@@ -609,7 +612,7 @@ Sarah's focus for next quarter: **always escalate** complex cancellations instea
 - All scores are reviewed by the **CEO** before bonuses are confirmed.
 - If you believe a score is inaccurate, raise it **in writing within 5 business days**.
 $BODY$,
-  array['csr','asr','hr','pm','manager']::user_role[], false, 1
+  array['csr','hr','pm','manager']::user_role[], false, 1
 on conflict (slug) do update set
   chapter_id=excluded.chapter_id, title=excluded.title, body=excluded.body,
   allowed_roles=excluded.allowed_roles, show_in_onboarding=excluded.show_in_onboarding, order_index=excluded.order_index;
