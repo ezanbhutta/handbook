@@ -97,10 +97,10 @@ function useComponents(): Components {
       if (callout) {
         return (
           <div
-            className={`my-5 flex gap-3 rounded-2xl border border-l-[5px] px-4 py-3.5 shadow-soft ${callout.box}`}
+            className={`my-5 flex items-center gap-3 rounded-2xl border border-l-[5px] px-4 py-3.5 shadow-soft ${callout.box}`}
           >
             <span
-              className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface/70 ${callout.accent}`}
+              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface/70 ${callout.accent}`}
             >
               <Icon name={callout.icon} size={16} />
             </span>
