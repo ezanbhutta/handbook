@@ -89,7 +89,7 @@ function ChapterItem({
           to={`/chapter/${slug}`}
           onClick={onNavigate}
           className={({ isActive }) =>
-            `flex flex-1 items-center gap-3 rounded-xl px-3 min-h-[44px] text-sm font-medium transition-colors ${
+            `flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 min-h-[44px] text-sm font-medium transition-colors ${
               isActive ? 'bg-brand-soft text-brand' : 'text-fg hover:bg-surface-2'
             }`
           }
@@ -100,7 +100,7 @@ function ChapterItem({
           >
             <Icon name={chapterIcon(icon)} size={16} />
           </span>
-          <span className="truncate">{title}</span>
+          <span className="min-w-0 flex-1 truncate">{title}</span>
         </NavLink>
         {sections.length > 0 && (
           <button
