@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useNavigation } from '@/lib/queries'
+import { chapterAccent } from '@/lib/accent'
 import { Icon, chapterIcon } from './Icon'
 import { Spinner } from './States'
 
@@ -39,7 +40,7 @@ export function NavTree({ onNavigate }: { onNavigate?: () => void }) {
       ) : chapters.length === 0 ? (
         <p className="px-3 py-2 text-sm text-muted">No chapters yet.</p>
       ) : (
-        chapters.map((chapter) => {
+        chapters.map((chapter, i) => {
           const active = location.pathname === `/chapter/${chapter.slug}`
           return (
             <ChapterItem
@@ -47,6 +48,7 @@ export function NavTree({ onNavigate }: { onNavigate?: () => void }) {
               slug={chapter.slug}
               title={chapter.title}
               icon={chapter.icon ?? null}
+              accent={chapterAccent(i)}
               sections={chapter.sections}
               defaultOpen={
                 active ||
@@ -65,6 +67,7 @@ function ChapterItem({
   slug,
   title,
   icon,
+  accent,
   sections,
   defaultOpen,
   onNavigate,
@@ -72,6 +75,7 @@ function ChapterItem({
   slug: string
   title: string
   icon: string | null
+  accent: string
   sections: { id: string; title: string; slug: string }[]
   defaultOpen: boolean
   onNavigate?: () => void
@@ -90,7 +94,12 @@ function ChapterItem({
             }`
           }
         >
-          <Icon name={chapterIcon(icon)} size={20} className="text-muted" />
+          <span
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-lg"
+            style={{ backgroundColor: `${accent}1a`, color: accent }}
+          >
+            <Icon name={chapterIcon(icon)} size={16} />
+          </span>
           <span className="truncate">{title}</span>
         </NavLink>
         {sections.length > 0 && (

@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom'
 import { useAccess } from '@/lib/access'
 import { useNavigation, useOnboarding } from '@/lib/queries'
 import { roleLabel } from '@/lib/roles'
+import { chapterAccent, chapterNumber } from '@/lib/accent'
 import { Wordmark } from '@/components/Wordmark'
+import { PulseMotif } from '@/components/PulseMotif'
 import { SearchBar } from '@/components/SearchBar'
 import { Icon, chapterIcon } from '@/components/Icon'
 import { LoadingState, EmptyState } from '@/components/States'
@@ -13,34 +15,41 @@ export function Home() {
   const { data: onboarding = [] } = useOnboarding()
 
   return (
-    <div className="book-page">
-      {/* Cover / title page */}
-      <header className="py-8 text-center sm:py-12">
-        <Wordmark
-          width={260}
-          className="mx-auto drop-shadow-[0_10px_28px_rgba(114,41,255,0.28)]"
-        />
+    <div className="book-page overflow-hidden">
+      {/* Cover / title page — a full-bleed branded spread */}
+      <header className="cover-aurora relative -mx-6 -mt-10 mb-9 overflow-hidden rounded-t-2xl px-6 pb-10 pt-12 text-center sm:-mx-12 sm:-mt-14 sm:px-12 sm:pb-12 sm:pt-16 lg:-mx-16 lg:px-16">
+        <Wordmark width={250} className="mx-auto drop-shadow-[0_10px_28px_rgba(114,41,255,0.28)]" />
         <p className="eyebrow mt-7">Design &amp; Branding Agency · Multan</p>
-        <h1 className="mt-3 font-serif text-4xl font-bold leading-[1.05] tracking-tight sm:text-[3.25rem]">
+        <h1 className="mt-3 font-serif text-4xl font-bold leading-[1.04] tracking-tight sm:text-[3.4rem]">
           The Company Handbook
         </h1>
         <p className="mx-auto mt-4 max-w-md font-serif text-lg italic leading-relaxed text-muted">
           Everything you need to know, in one place.
         </p>
-        <p className="mt-7 text-sm text-muted">Abdul Haseeb · CEO &amp; Founder</p>
-        {role && <span className="chip-brand mt-5 inline-flex">{roleLabel(role)} edition</span>}
+        <div className="mt-6 flex items-center justify-center gap-3 text-brand">
+          <span className="h-px w-8 bg-brand/30" />
+          <PulseMotif height={16} />
+          <span className="h-px w-8 bg-brand/30" />
+        </div>
+        <p className="mt-6 text-sm font-medium text-muted">Abdul Haseeb · CEO &amp; Founder</p>
+        {role && <span className="chip-brand mt-4 inline-flex">{roleLabel(role)} edition</span>}
       </header>
 
-      <hr className="border-border" />
-
       {/* Search */}
-      <div className="mt-8">
+      <div>
         <SearchBar size="lg" placeholder="Search the handbook…" />
       </div>
 
       {/* Table of contents */}
       <section className="mt-9">
-        <h2 className="eyebrow mb-1">Contents</h2>
+        <div className="mb-3 flex items-center gap-2.5">
+          <h2 className="eyebrow">Contents</h2>
+          <span className="h-px flex-1 bg-border" />
+          {chapters.length > 0 && (
+            <span className="text-xs font-medium tabular-nums text-muted">{chapters.length} chapters</span>
+          )}
+        </div>
+
         {isLoading ? (
           <LoadingState />
         ) : chapters.length === 0 ? (
@@ -48,38 +57,50 @@ export function Home() {
             Chapters appear here once content you can see has been published.
           </EmptyState>
         ) : (
-          <ol className="divide-y divide-border">
-            {chapters.map((c, i) => (
-              <li key={c.id}>
-                <Link
-                  to={`/chapter/${c.slug}`}
-                  className="group flex items-center gap-4 py-3.5 transition-colors"
-                >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-surface-2 text-brand transition-colors group-hover:bg-brand-soft">
-                    <Icon name={chapterIcon(c.icon)} size={21} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-baseline gap-2">
-                      <span className="text-xs font-semibold tabular-nums text-muted">{i + 1}</span>
-                      <span className="font-serif text-lg font-medium group-hover:text-brand">
-                        {c.title}
-                      </span>
+          <ol className="grid gap-2.5">
+            {chapters.map((c, i) => {
+              const accent = chapterAccent(i)
+              return (
+                <li key={c.id} className="animate-rise" style={{ animationDelay: `${Math.min(i * 45, 360)}ms` }}>
+                  <Link
+                    to={`/chapter/${c.slug}`}
+                    className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-border bg-surface p-3.5 pl-5 transition duration-200 hover:-translate-y-0.5 hover:border-transparent hover:shadow-brand"
+                  >
+                    <span
+                      className="absolute inset-y-0 left-0 w-1.5"
+                      style={{ background: accent }}
+                      aria-hidden="true"
+                    />
+                    <span
+                      className="w-8 shrink-0 text-center font-serif text-2xl font-bold tabular-nums"
+                      style={{ color: accent }}
+                    >
+                      {chapterNumber(i)}
                     </span>
-                    {c.description && (
-                      <span className="block truncate text-sm text-muted">{c.description}</span>
-                    )}
-                  </span>
-                  <span className="shrink-0 text-xs tabular-nums text-muted">
-                    {c.sections.length}
-                  </span>
-                  <Icon
-                    name="chevron-right"
-                    size={18}
-                    className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </li>
-            ))}
+                    <span
+                      className="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-white shadow-soft transition-transform duration-200 group-hover:scale-105"
+                      style={{ background: accent }}
+                    >
+                      <Icon name={chapterIcon(c.icon)} size={22} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-serif text-lg font-semibold leading-snug">{c.title}</span>
+                      {c.description && (
+                        <span className="mt-0.5 block truncate text-sm text-muted">{c.description}</span>
+                      )}
+                    </span>
+                    <span className="hidden shrink-0 text-xs font-medium tabular-nums text-muted sm:block">
+                      {c.sections.length} {c.sections.length === 1 ? 'part' : 'parts'}
+                    </span>
+                    <Icon
+                      name="chevron-right"
+                      size={18}
+                      className="shrink-0 text-muted transition-transform duration-200 group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                </li>
+              )
+            })}
           </ol>
         )}
       </section>

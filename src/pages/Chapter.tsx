@@ -3,25 +3,16 @@ import { Link, useParams, useLocation } from 'react-router-dom'
 import { useAccess } from '@/lib/access'
 import { useChapter, useNavigation } from '@/lib/queries'
 import { driveEmbedUrl } from '@/lib/video'
+import { chapterAccent, chapterNumber } from '@/lib/accent'
 import { Markdown } from '@/components/Markdown'
 import { Icon, chapterIcon } from '@/components/Icon'
+import { PulseMotif } from '@/components/PulseMotif'
 import { ReadingProgress } from '@/components/ReadingProgress'
 import { LoadingState, ErrorState, EmptyState } from '@/components/States'
 
 function readTime(text: string): number {
   const words = text.trim() ? text.trim().split(/\s+/).length : 0
   return Math.max(1, Math.round(words / 200))
-}
-
-// One accent colour per chapter (by its number) for the cover header, all
-// harmonious with the violet brand.
-const CHAPTER_ACCENTS = [
-  '#7229FF', '#DB2777', '#2563EB', '#0D9488', '#4F46E5', '#059669',
-  '#0891B2', '#D97706', '#DC2626', '#EA580C', '#9333EA', '#7C3AED',
-]
-function accentFor(n: number | null): string {
-  const i = ((n ?? 1) - 1) % CHAPTER_ACCENTS.length
-  return CHAPTER_ACCENTS[(i + CHAPTER_ACCENTS.length) % CHAPTER_ACCENTS.length]
 }
 
 export function Chapter() {
@@ -59,8 +50,8 @@ export function Chapter() {
 
   // Previous / next chapter, to turn the page.
   const order = chapters.findIndex((c) => c.slug === chapter.slug)
-  const chapterNo = order >= 0 ? chapters[order].order : null
-  const accent = accentFor(chapterNo)
+  const accent = chapterAccent(order >= 0 ? order : 0)
+  const label = order >= 0 ? chapterNumber(order) : null
   const prevChapter = order > 0 ? chapters[order - 1] : null
   const nextChapter = order >= 0 && order < chapters.length - 1 ? chapters[order + 1] : null
 
@@ -73,31 +64,41 @@ export function Chapter() {
           Handbook
         </Link>
         <header
-          className="mt-3 rounded-2xl border border-border p-6 sm:p-8"
-          style={{ background: `linear-gradient(135deg, ${accent}14, transparent 70%)` }}
+          className="relative mt-3 overflow-hidden rounded-2xl border border-border p-6 sm:p-8"
+          style={{ background: `linear-gradient(135deg, ${accent}1f, ${accent}08 45%, transparent 75%)` }}
         >
-          <div className="flex items-center gap-3">
+          {/* Oversized chapter numeral, a quiet graphic in the corner */}
+          {label && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-3 -top-7 select-none font-serif font-bold leading-none"
+              style={{ color: accent, opacity: 0.1, fontSize: '9.5rem' }}
+            >
+              {label}
+            </span>
+          )}
+          <div className="relative flex items-center gap-3">
             <span
               className="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-white shadow-soft"
               style={{ background: accent }}
             >
               <Icon name={chapterIcon(chapter.icon)} size={26} />
             </span>
-            <p
-              className="text-xs font-semibold uppercase tracking-[0.18em]"
-              style={{ color: accent }}
-            >
-              {chapterNo ? `Chapter ${chapterNo}` : 'Chapter'}
-            </p>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: accent }}>
+                {label ? `Chapter ${label}` : 'Chapter'}
+              </p>
+              <PulseMotif height={13} className="mt-1.5" style={{ color: accent, opacity: 0.55 }} />
+            </div>
           </div>
-          <h1 className="mt-4 font-serif text-3xl font-bold leading-tight tracking-tight sm:text-[2.6rem]">
+          <h1 className="relative mt-4 font-serif text-3xl font-bold leading-tight tracking-tight sm:text-[2.6rem]">
             {chapter.title}
           </h1>
           {chapter.description && (
-            <p className="mt-2.5 font-serif text-xl leading-relaxed text-muted">{chapter.description}</p>
+            <p className="relative mt-2.5 font-serif text-xl leading-relaxed text-muted">{chapter.description}</p>
           )}
           {sections.length > 0 && (
-            <p className="mt-3 text-sm text-muted">
+            <p className="relative mt-3 text-sm text-muted">
               {sections.length} {sections.length === 1 ? 'section' : 'sections'} · {totalRead} min read
             </p>
           )}
@@ -114,11 +115,26 @@ export function Chapter() {
             const embed = driveEmbedUrl(s.video_url)
             return (
               <section key={s.id} id={`s-${s.slug}`} className="scroll-mt-24">
-                <hr className={`border-border ${i === 0 ? 'my-7' : 'my-10'}`} />
+                <div
+                  className={`flex items-center gap-3 ${i === 0 ? 'mt-8' : 'mt-12'} mb-5`}
+                  aria-hidden="true"
+                >
+                  <span className="h-px flex-1 bg-border" />
+                  <PulseMotif height={13} style={{ color: accent, opacity: 0.7 }} />
+                  <span className="h-px flex-1 bg-border" />
+                </div>
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="font-serif text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
-                    {s.title}
-                  </h2>
+                  <div className="flex items-start gap-3">
+                    <span
+                      className="mt-1 grid h-7 min-w-[1.75rem] shrink-0 place-items-center rounded-lg px-1.5 text-sm font-bold text-white"
+                      style={{ background: accent }}
+                    >
+                      {i + 1}
+                    </span>
+                    <h2 className="font-serif text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+                      {s.title}
+                    </h2>
+                  </div>
                   {isAdmin && (
                     <Link
                       to={`/admin/sections/${s.id}/edit`}

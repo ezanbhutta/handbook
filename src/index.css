@@ -154,6 +154,15 @@
     @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand;
   }
 
+  /* A soft brand "aurora" wash for the cover spread and other hero panels.
+     Built from the theme's brand token, so it adapts to day, night, reading. */
+  .cover-aurora {
+    background:
+      radial-gradient(120% 130% at 0% 0%, rgb(var(--color-brand) / 0.20), transparent 52%),
+      radial-gradient(120% 130% at 100% 0%, rgb(var(--color-brand) / 0.12), transparent 55%),
+      linear-gradient(180deg, rgb(var(--color-brand-soft) / 0.55), rgb(var(--color-surface)) 92%);
+  }
+
   .chip {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1
            text-xs font-medium bg-surface-2 text-muted;
@@ -193,5 +202,29 @@
     font-size: 1.15rem;
     line-height: 1.9;
     letter-spacing: 0.003em;
+  }
+}
+
+/* Gentle entrance for lists and cards, e.g. the table of contents. Uses only
+   transform and opacity so it stays smooth, and bows out for reduced motion. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-rise {
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
   }
 }

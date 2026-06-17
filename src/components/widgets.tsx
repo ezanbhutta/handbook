@@ -122,7 +122,7 @@ export function Stats({ raw }: { raw: string }) {
       {data.map((s, i) => (
         <div
           key={i}
-          className="rounded-2xl border border-border bg-gradient-to-br from-brand-soft/50 to-surface p-4 text-center shadow-soft"
+          className="rounded-2xl border border-border bg-gradient-to-br from-brand-soft/50 to-surface p-4 text-center shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand"
         >
           <p className="font-serif text-3xl font-bold leading-none text-brand">{s[0]}</p>
           {s[1] && <p className="mt-1.5 text-sm text-muted">{s[1]}</p>}

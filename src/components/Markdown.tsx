@@ -72,9 +72,15 @@ function useComponents(): Components {
       const callout = label ? CALLOUTS[label.toLowerCase()] : undefined
       if (callout) {
         return (
-          <div className={`my-4 flex gap-3 rounded-xl border-l-4 px-4 py-3 ${callout.box}`}>
-            <Icon name={callout.icon} size={18} className={`mt-0.5 shrink-0 ${callout.accent}`} />
-            <div className="text-sm text-fg/90 [&>p]:my-0 [&>p+p]:mt-2">{children}</div>
+          <div
+            className={`my-5 flex gap-3 rounded-2xl border border-l-[5px] px-4 py-3.5 shadow-soft ${callout.box}`}
+          >
+            <span
+              className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface/70 ${callout.accent}`}
+            >
+              <Icon name={callout.icon} size={16} />
+            </span>
+            <div className="text-sm leading-relaxed text-fg/90 [&>p]:my-0 [&>p+p]:mt-2">{children}</div>
           </div>
         )
       }
