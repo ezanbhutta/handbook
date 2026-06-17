@@ -165,12 +165,21 @@
      Reading mode. Tuned after top docs/readers (GitBook, Stripe, Readwise). */
   .prose-body {
     font-family: var(--font-prose);
-    font-size: 1.125rem; /* 18px — book body */
+    font-size: 1.0625rem; /* 17px — book body */
     line-height: 1.8;
+  }
+  /* Justify the running text for a clean book column. Hyphenation stays off so
+     no word is ever broken, and the last line of each paragraph reads ragged. */
+  .prose-body p,
+  .prose-body li {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: none;
+    -webkit-hyphens: none;
   }
   /* The opening line reads like a book's standfirst/lead. */
   .prose-body > p:first-child {
-    font-size: 1.25rem;
+    font-size: 1.1875rem; /* 19px */
     line-height: 1.65;
     color: rgb(var(--color-fg));
   }
@@ -180,7 +189,7 @@
     margin-top: 0;
   }
   [data-theme='reading'] .prose-body {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     line-height: 1.9;
     letter-spacing: 0.003em;
   }

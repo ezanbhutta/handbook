@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAccess } from '@/lib/access'
 import { useNavigation, useOnboarding } from '@/lib/queries'
 import { roleLabel } from '@/lib/roles'
-import { Logo } from '@/components/Logo'
+import { Wordmark } from '@/components/Wordmark'
 import { SearchBar } from '@/components/SearchBar'
 import { Icon, chapterIcon } from '@/components/Icon'
 import { LoadingState, EmptyState } from '@/components/States'
@@ -16,8 +16,11 @@ export function Home() {
     <div className="book-page">
       {/* Cover / title page */}
       <header className="py-8 text-center sm:py-12">
-        <Logo size={60} className="mx-auto drop-shadow-[0_12px_34px_rgba(114,41,255,0.35)]" />
-        <p className="eyebrow mt-7">HaseebMadeit · Design &amp; Branding Agency</p>
+        <Wordmark
+          width={260}
+          className="mx-auto drop-shadow-[0_10px_28px_rgba(114,41,255,0.28)]"
+        />
+        <p className="eyebrow mt-7">Design &amp; Branding Agency · Multan</p>
         <h1 className="mt-3 font-serif text-4xl font-bold leading-[1.05] tracking-tight sm:text-[3.25rem]">
           The Company Handbook
         </h1>
