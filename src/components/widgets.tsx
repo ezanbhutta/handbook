@@ -16,13 +16,6 @@ function rows(raw: string): string[][] {
     .filter((r) => r[0])
 }
 
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  const first = parts[0]?.[0] ?? ''
-  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
-  return (first + last).toUpperCase()
-}
-
 function people(list: string | undefined): string[] {
   return (list ?? '')
     .split(',')
@@ -54,11 +47,8 @@ export function OrgChart({ raw }: { raw: string }) {
                     {team.map((p) => (
                       <span
                         key={p}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand-soft/50 py-1 pl-1 pr-2.5 text-sm font-medium text-brand"
+                        className="inline-flex items-center rounded-full border border-brand/20 bg-brand-soft/50 px-3 py-1 text-sm font-medium text-brand"
                       >
-                        <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-[10px] font-bold text-brand-fg">
-                          {initials(p)}
-                        </span>
                         {p}
                       </span>
                     ))}
@@ -128,15 +118,9 @@ export function ShiftCards({ raw }: { raw: string }) {
                   {members.map((m) => (
                     <span
                       key={m}
-                      className="inline-flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2.5 text-sm font-medium"
+                      className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
                       style={{ backgroundColor: `${theme.color}16`, color: theme.color }}
                     >
-                      <span
-                        className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white"
-                        style={{ background: theme.color }}
-                      >
-                        {initials(m)}
-                      </span>
                       {m}
                     </span>
                   ))}
