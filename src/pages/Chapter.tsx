@@ -4,6 +4,7 @@ import { useAccess } from '@/lib/access'
 import { useChapter, useNavigation } from '@/lib/queries'
 import { driveEmbedUrl } from '@/lib/video'
 import { chapterAccent, chapterNumber } from '@/lib/accent'
+import { setActiveSection } from '@/lib/scrollspy'
 import { Markdown } from '@/components/Markdown'
 import { Icon, chapterIcon } from '@/components/Icon'
 import { PulseMotif } from '@/components/PulseMotif'
@@ -34,6 +35,37 @@ export function Chapter() {
       window.scrollTo({ top: 0 })
     }
   }, [data, location.hash, location.key])
+
+  // Scroll spy: as the reader scrolls, mark the section under the top of the
+  // viewport active, so the sidebar highlight follows along. rAF-throttled, and
+  // it only publishes when the active section actually changes.
+  useEffect(() => {
+    if (!data) return
+    let raf = 0
+    const compute = () => {
+      raf = 0
+      const secs = Array.from(document.querySelectorAll<HTMLElement>('section[id^="s-"]'))
+      if (!secs.length) return
+      let currentId = secs[0].id
+      for (const s of secs) {
+        if (s.getBoundingClientRect().top - 120 <= 0) currentId = s.id
+        else break
+      }
+      setActiveSection(currentId.slice(2))
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(compute)
+    }
+    compute()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+      setActiveSection('')
+    }
+  }, [data, slug])
 
   if (isLoading) return <LoadingState />
   if (error) return <ErrorState error={error} />

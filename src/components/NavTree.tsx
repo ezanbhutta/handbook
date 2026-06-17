@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useNavigation } from '@/lib/queries'
 import { chapterAccent } from '@/lib/accent'
+import { useActiveSection } from '@/lib/scrollspy'
 import { Icon, chapterIcon } from './Icon'
 import { Spinner } from './States'
 
@@ -10,6 +11,7 @@ import { Spinner } from './States'
 export function NavTree({ onNavigate }: { onNavigate?: () => void }) {
   const { data: chapters = [], isLoading } = useNavigation()
   const location = useLocation()
+  const activeSlug = useActiveSection()
 
   const linkBase =
     'flex items-center gap-3 rounded-xl px-3 min-h-[44px] text-sm transition-colors'
@@ -49,6 +51,7 @@ export function NavTree({ onNavigate }: { onNavigate?: () => void }) {
               title={chapter.title}
               icon={chapter.icon ?? null}
               accent={chapterAccent(i)}
+              activeSlug={activeSlug}
               sections={chapter.sections}
               defaultOpen={
                 active ||
@@ -68,6 +71,7 @@ function ChapterItem({
   title,
   icon,
   accent,
+  activeSlug,
   sections,
   defaultOpen,
   onNavigate,
@@ -76,6 +80,7 @@ function ChapterItem({
   title: string
   icon: string | null
   accent: string
+  activeSlug: string
   sections: { id: string; title: string; slug: string }[]
   defaultOpen: boolean
   onNavigate?: () => void
@@ -117,8 +122,12 @@ function ChapterItem({
       {open && sections.length > 0 && (
         <ul className="ml-5 mt-0.5 border-l border-border pl-2">
           {sections.map((s) => {
-            const current =
-              location.pathname === `/chapter/${slug}` && location.hash === `#s-${s.slug}`
+            const onThisChapter = location.pathname === `/chapter/${slug}`
+            const current = onThisChapter
+              ? activeSlug
+                ? activeSlug === s.slug
+                : location.hash === `#s-${s.slug}`
+              : false
             return (
               <li key={s.id}>
                 <Link
@@ -126,7 +135,7 @@ function ChapterItem({
                   onClick={onNavigate}
                   className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
                     current
-                      ? 'font-medium text-brand'
+                      ? 'bg-brand-soft font-medium text-brand'
                       : 'text-muted hover:bg-surface-2 hover:text-fg'
                   }`}
                 >
