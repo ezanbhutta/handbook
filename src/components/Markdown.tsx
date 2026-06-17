@@ -29,6 +29,30 @@ function nodeText(node: ReactNode): string {
   return ''
 }
 
+// Pull the header labels and row text out of a markdown table's hast node, so
+// the same table can render as a real table on desktop and as tidy cards on a
+// phone, where wide tables otherwise force a horizontal scroll.
+type HastNode = { type?: string; tagName?: string; value?: string; children?: HastNode[] }
+
+function cellText(node: HastNode | undefined): string {
+  if (!node) return ''
+  if (node.type === 'text') return node.value ?? ''
+  if (node.children) return node.children.map(cellText).join('')
+  return ''
+}
+
+function parseTable(node: HastNode | undefined): { headers: string[]; rows: string[][] } {
+  const kids = node?.children ?? []
+  const thead = kids.find((c) => c.tagName === 'thead')
+  const tbody = kids.find((c) => c.tagName === 'tbody')
+  const headRow = (thead?.children ?? []).find((r) => r.tagName === 'tr')
+  const headers = (headRow?.children ?? []).filter((c) => c.tagName === 'th').map(cellText)
+  const rows = (tbody?.children ?? [])
+    .filter((r) => r.tagName === 'tr')
+    .map((r) => (r.children ?? []).filter((c) => c.tagName === 'td').map(cellText))
+  return { headers, rows }
+}
+
 // Section bodies are author-written markdown. We always sanitize (rehype-sanitize)
 // before rendering — even though only admins author, defense in depth is cheap.
 // Element styling lives here instead of @tailwindcss/typography to keep deps lean.
@@ -122,11 +146,35 @@ function useComponents(): Components {
       />
     ),
     hr: () => <hr className="my-6 border-border" />,
-    table: ({ children }) => (
-      <div className="my-4 overflow-x-auto rounded-xl border border-border">
-        <table className="w-full text-sm">{children}</table>
-      </div>
-    ),
+    table: ({ node, children }) => {
+      const { headers, rows } = parseTable(node as unknown as HastNode)
+      return (
+        <div className="my-5">
+          {/* Desktop: the real table, with full formatting */}
+          <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">
+            <table className="w-full text-sm">{children}</table>
+          </div>
+          {/* Phone: each row becomes a tidy card, its first cell the heading */}
+          {rows.length > 0 && (
+            <div className="space-y-3 sm:hidden">
+              {rows.map((r, ri) => (
+                <div key={ri} className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
+                  <div className="bg-brand-soft/50 px-3.5 py-2 font-serif font-semibold text-brand">{r[0]}</div>
+                  <dl className="divide-y divide-border">
+                    {r.slice(1).map((c, ci) => (
+                      <div key={ci} className="flex justify-between gap-4 px-3.5 py-2 text-sm">
+                        <dt className="shrink-0 text-muted">{headers[ci + 1]}</dt>
+                        <dd className="text-right font-medium text-fg">{c}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )
+    },
     thead: ({ children }) => <thead className="bg-surface-2">{children}</thead>,
     th: ({ children }) => <th className="px-3 py-2 text-left font-semibold border-b border-border">{children}</th>,
     td: ({ children }) => <td className="px-3 py-2 border-b border-border align-top">{children}</td>,

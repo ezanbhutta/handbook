@@ -92,7 +92,7 @@ export function ShiftCards({ raw }: { raw: string }) {
   return (
     <div className="my-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {data.map((s, i) => {
-        const theme = SHIFT_THEME[s[0]?.toLowerCase()] ?? { color: 'rgb(114 41 255)', icon: 'calendar' as IconName }
+        const theme = SHIFT_THEME[s[0]?.toLowerCase()] ?? { color: '#7229FF', icon: 'calendar' as IconName }
         const members = (s[3] ?? '')
           .split(',')
           .map((m) => m.trim())
@@ -123,14 +123,23 @@ export function ShiftCards({ raw }: { raw: string }) {
                 </p>
               )}
               {members.length > 0 && (
-                <ul className="mt-2 space-y-0.5">
+                <div className="mt-3 flex flex-wrap gap-1.5">
                   {members.map((m) => (
-                    <li key={m} className="flex items-center gap-2 text-sm text-fg/90">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: theme.color }} />
+                    <span
+                      key={m}
+                      className="inline-flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2.5 text-sm font-medium"
+                      style={{ backgroundColor: `${theme.color}16`, color: theme.color }}
+                    >
+                      <span
+                        className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white"
+                        style={{ background: theme.color }}
+                      >
+                        {initials(m)}
+                      </span>
                       {m}
-                    </li>
+                    </span>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </div>
