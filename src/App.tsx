@@ -4,7 +4,6 @@ import { ProtectedRoute, AdminRoute } from '@/components/guards'
 import { Layout } from '@/components/Layout'
 import { Login } from '@/pages/Login'
 import { Home } from '@/pages/Home'
-import { Chapter } from '@/pages/Chapter'
 import { WhatsNew } from '@/pages/WhatsNew'
 import { SearchPage } from '@/pages/SearchPage'
 import { NotFound } from '@/pages/NotFound'
@@ -13,6 +12,7 @@ import { TokenCapture } from '@/pages/TokenCapture'
 
 // Code-split the markdown-heavy reader and the admin area so the core bundle
 // that most staff load on a phone stays small.
+const Chapter = lazy(() => import('@/pages/Chapter').then((m) => ({ default: m.Chapter })))
 const Section = lazy(() => import('@/pages/Section').then((m) => ({ default: m.Section })))
 const AdminLayout = lazy(() =>
   import('@/pages/admin/AdminLayout').then((m) => ({ default: m.AdminLayout })),

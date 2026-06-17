@@ -57,7 +57,7 @@ export function Home() {
             {onboarding.map((s, i) => (
               <li key={s.id}>
                 <Link
-                  to={`/section/${s.slug}`}
+                  to={s.chapters ? `/chapter/${s.chapters.slug}#s-${s.slug}` : `/section/${s.slug}`}
                   className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-surface-2"
                 >
                   <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-soft text-xs font-bold text-brand">

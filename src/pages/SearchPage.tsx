@@ -77,7 +77,7 @@ export function SearchPage() {
             {results.map((r) => (
               <li key={r.section_id}>
                 <Link
-                  to={`/section/${r.section_slug}`}
+                  to={`/chapter/${r.chapter_slug}#s-${r.section_slug}`}
                   onClick={() => onClickResult(r.section_id)}
                   className="group block rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-brand/40 hover:bg-surface-2"
                 >

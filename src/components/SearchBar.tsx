@@ -50,7 +50,7 @@ export function SearchBar({ size = 'md', autoFocus = false, placeholder }: Props
     }
     setOpen(false)
     setQuery('')
-    navigate(`/section/${result.section_slug}`)
+    navigate(`/chapter/${result.chapter_slug}#s-${result.section_slug}`)
   }
 
   function submitAll() {
