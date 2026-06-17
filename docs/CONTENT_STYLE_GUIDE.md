@@ -111,15 +111,17 @@ Read it aloud. If it sounds like a person wrote it for a teammate, it's right.
 ## Visibility (who sees what)
 
 Roles: `csr`, `asr`, `hr`, `pm`, `manager`, `office_boy`. **CSR and ASR are
-separate roles** — don't bundle them. Default open, restrict by exception:
+separate roles**, so don't bundle them. Default open, restrict by exception:
 
-- **Everyone (all six roles):** welcome, company/org, conduct & culture,
+- **Manager and HR always have full access.** Include both `manager` and `hr`
+  in every section's allowed roles, even the restricted ones.
+- **Everyone (all six roles):** welcome, company and org, conduct and culture,
   attendance, security basics, emergencies, glossary.
-- **Manager always has full access** — include `manager` in every section.
-- **CSR content** (CSR job descriptions, the SOPs/playbook, ClickUp, bonus):
+- **CSR content** (CSR job descriptions, the SOPs and playbook, ClickUp, bonus):
   `csr, hr, pm, manager`.
-- **ASR content:** scoped to `asr` (+ `hr, pm, manager`) when it's added.
-- **Tighter:** restrict to specific roles only when it's genuinely sensitive.
+- **ASR content:** scoped to `asr` plus `hr, pm, manager` when it's added.
+- **Tighter:** restrict to specific roles only when it's genuinely sensitive,
+  and still keep `manager` and `hr` in the list.
 
 Flag onboarding-critical sections with **Start Here** so new hires see them first.
 
