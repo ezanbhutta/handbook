@@ -86,11 +86,25 @@ Use callouts sparingly — 1–3 per section. If everything is highlighted, noth
 
 ---
 
-## Voice
+## Voice: write like a person
 
-Conversational, friendly, and respectful — a knowledgeable colleague, not a
-legal notice or a drill sergeant. Warm but precise. Match the company's own
-phrasing where it's strong ("Always help, never sell").
+Sound like a real colleague explaining something, not a manual and not a robot.
+This is the most important rule here.
+
+- **No em dashes or en dashes.** Use full stops, commas, or "and". Rewrite the
+  sentence rather than reaching for a dash.
+- **Avoid hyphens.** Reword instead. "Five minute reply" becomes "reply within
+  five minutes"; "after sales" stays two words; "cross sell" becomes "offer an
+  extra service".
+- **Use contractions.** "It's", "you'll", "don't". They make writing sound human.
+- **Plain everyday words.** "Make sure", not "ensure". "Use", not "utilise".
+  "About", not "regarding". "Before", not "prior to".
+- **No AI tells.** Skip "In short", "delve", "robust", "seamless", "leverage",
+  "it's worth noting", "furthermore", and perfectly parallel triads. Vary your
+  sentence lengths.
+- **Keep the company's own warmth** where it's strong ("Always help, never sell").
+
+Read it aloud. If it sounds like a person wrote it for a teammate, it's right.
 
 ---
 
