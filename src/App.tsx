@@ -23,6 +23,9 @@ const AdminHome = lazy(() =>
 const AdminChapters = lazy(() =>
   import('@/pages/admin/AdminChapters').then((m) => ({ default: m.AdminChapters })),
 )
+const AdminRoster = lazy(() =>
+  import('@/pages/admin/AdminRoster').then((m) => ({ default: m.AdminRoster })),
+)
 const AdminSections = lazy(() =>
   import('@/pages/admin/AdminSections').then((m) => ({ default: m.AdminSections })),
 )
@@ -61,6 +64,7 @@ export default function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminHome />} />
               <Route path="chapters" element={<AdminChapters />} />
+              <Route path="roster" element={<AdminRoster />} />
               <Route path="sections" element={<AdminSections />} />
               <Route path="sections/new" element={<SectionEditor />} />
               <Route path="sections/:id/edit" element={<SectionEditor />} />

@@ -6,6 +6,7 @@ import { LoadingState } from '@/components/States'
 const TABS: { to: string; label: string; icon: IconName; end?: boolean }[] = [
   { to: '/admin', label: 'Overview', icon: 'home', end: true },
   { to: '/admin/chapters', label: 'Chapters', icon: 'list' },
+  { to: '/admin/roster', label: 'Roster', icon: 'badge' },
   { to: '/admin/sections', label: 'Sections', icon: 'book' },
   { to: '/admin/links', label: 'Links', icon: 'link' },
   { to: '/admin/synonyms', label: 'Synonyms', icon: 'search' },

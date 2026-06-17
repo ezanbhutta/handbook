@@ -1,5 +1,6 @@
 import { Icon, type IconName } from './Icon'
 import { ShiftLoggerFlow } from './ShiftLoggerFlow'
+import { RosterWidget } from './RosterWidget'
 
 // Visual blocks embedded in section markdown via fenced code blocks, e.g.
 //   ```orgchart
@@ -256,6 +257,7 @@ const WIDGETS: Record<string, (raw: string) => JSX.Element> = {
   keyvalue: (raw) => <KeyValue raw={raw} />,
   dodont: (raw) => <DoDont raw={raw} />,
   shiftlogger: () => <ShiftLoggerFlow />,
+  roster: () => <RosterWidget />,
 }
 
 // Returns a widget renderer for a `language-xxx` className, or null.

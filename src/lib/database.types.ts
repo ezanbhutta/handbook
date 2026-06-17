@@ -205,6 +205,41 @@ export type Database = {
         }
         Relationships: []
       }
+      roster: {
+        Row: {
+          id: string
+          name: string
+          role: string
+          shift: string | null
+          off_day: string | null
+          order_index: number
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          role?: string
+          shift?: string | null
+          off_day?: string | null
+          order_index?: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          role?: string
+          shift?: string | null
+          off_day?: string | null
+          order_index?: number
+          active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: {
@@ -344,6 +379,18 @@ export type Database = {
       log_search_click: {
         Args: { p_token: string; p_log_id: string; p_section_id: string }
         Returns: undefined
+      }
+      roster_for_token: {
+        Args: { p_token: string }
+        Returns: {
+          id: string
+          name: string
+          role: string
+          shift: string | null
+          off_day: string | null
+          order_index: number
+          active: boolean
+        }[]
       }
     }
     Enums: {
