@@ -37,6 +37,24 @@ CLI (`supabase functions deploy admin-users`).
 
 The migrations are idempotent, so re-running them is safe.
 
+## Automatic migrations (so you never paste SQL again)
+
+`.github/workflows/deploy-migrations.yml` applies everything in `migrations/`
+to your project automatically whenever a migration changes on `main`. It stays
+dormant (and passes green) until you add three repository secrets, under
+**GitHub → Settings → Secrets and variables → Actions → New repository secret**:
+
+| Secret | Where to get it |
+| --- | --- |
+| `SUPABASE_ACCESS_TOKEN` | supabase.com/dashboard/account/tokens |
+| `SUPABASE_DB_PASSWORD` | the database password set when the project was created |
+| `SUPABASE_PROJECT_ID` | your project ref (the `abcd1234` part of the project URL) |
+
+Once they're set, open **Actions → Apply database migrations → Run workflow** to
+apply the current migrations, and from then on every merge applies itself. These
+secrets are encrypted by GitHub and grant the workflow write access to your
+database, so treat them like the keys they are.
+
 ## Create the first admin (one-time bootstrap)
 
 There's a deliberate chicken-and-egg: only an admin can create accounts, so the
