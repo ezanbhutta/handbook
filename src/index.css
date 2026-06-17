@@ -144,10 +144,11 @@
     @apply rounded-2xl border border-border bg-surface;
   }
 
-  /* A section rendered as a book page: a centered sheet with generous margins. */
+  /* A section rendered as a book page: a wide, left-aligned A4-style sheet with
+     generous margins, so chapters and sections sit flush to the left. */
   .book-page {
-    @apply mx-auto max-w-[44rem] rounded-2xl border border-border bg-surface
-           px-6 py-10 shadow-soft sm:px-12 sm:py-14;
+    @apply max-w-[58rem] rounded-2xl border border-border bg-surface
+           px-6 py-10 shadow-soft sm:px-12 sm:py-14 lg:px-16;
   }
   .eyebrow {
     @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand;
