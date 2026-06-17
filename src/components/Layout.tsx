@@ -12,10 +12,10 @@ import { LoadingState } from './States'
 
 function Brand() {
   return (
-    <Link to="/" className="flex items-center gap-2.5" aria-label="HaseebMadeIt Handbook — home">
+    <Link to="/" className="flex items-center gap-2.5" aria-label="HaseebMadeit Handbook home">
       <Logo size={34} />
       <span className="text-base font-bold tracking-tight">
-        Haseeb<span className="text-brand">MadeIt</span>
+        Haseeb<span className="text-brand">Madeit</span>
       </span>
     </Link>
   )

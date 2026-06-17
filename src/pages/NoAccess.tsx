@@ -8,7 +8,7 @@ export function NoAccess({ invalid = false }: { invalid?: boolean }) {
       <div className="w-full max-w-md text-center">
         <Logo size={64} className="mx-auto drop-shadow-[0_10px_30px_rgba(114,41,255,0.35)]" />
         <h1 className="mt-5 text-2xl font-bold tracking-tight">
-          Haseeb<span className="text-brand">MadeIt</span> Handbook
+          Haseeb<span className="text-brand">Madeit</span> Handbook
         </h1>
         <p className="mt-3 text-muted">
           {invalid

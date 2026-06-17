@@ -1,4 +1,4 @@
-# HaseebMadeIt Handbook
+# HaseebMadeit Handbook
 
 One live company handbook. A single source of truth, with role-derived access,
 intelligent search, and a "What's New" banner. The admin authors and approves
