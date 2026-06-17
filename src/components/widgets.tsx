@@ -16,7 +16,7 @@ function rows(raw: string): string[][] {
 }
 
 function chips(list: string | undefined) {
-  if (!list) return null
+  if (!list?.trim()) return null
   return (
     <div className="mt-1.5 flex flex-wrap justify-center gap-1">
       {list
@@ -116,17 +116,110 @@ export function ShiftCards({ raw }: { raw: string }) {
 // A row of stat tiles: Value | Label
 export function Stats({ raw }: { raw: string }) {
   const data = rows(raw)
+  const cols = data.length === 4 ? 'sm:grid-cols-4' : data.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
   return (
-    <div className="my-6 grid gap-3 sm:grid-cols-3">
+    <div className={`my-6 grid grid-cols-2 gap-3 ${cols}`}>
       {data.map((s, i) => (
         <div
           key={i}
           className="rounded-2xl border border-border bg-gradient-to-br from-brand-soft/50 to-surface p-4 text-center shadow-soft"
         >
-          <p className="font-serif text-3xl font-bold text-brand">{s[0]}</p>
-          {s[1] && <p className="mt-1 text-sm text-muted">{s[1]}</p>}
+          <p className="font-serif text-3xl font-bold leading-none text-brand">{s[0]}</p>
+          {s[1] && <p className="mt-1.5 text-sm text-muted">{s[1]}</p>}
         </div>
       ))}
+    </div>
+  )
+}
+
+// A vertical numbered step flow: Title | Description
+export function Steps({ raw }: { raw: string }) {
+  const data = rows(raw)
+  return (
+    <ol className="my-6">
+      {data.map((s, i) => (
+        <li key={i} className="flex gap-4">
+          <div className="flex flex-col items-center">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand font-bold text-brand-fg">
+              {i + 1}
+            </span>
+            {i < data.length - 1 && <span className="my-1 w-px grow bg-border" />}
+          </div>
+          <div className="pb-6">
+            <p className="font-semibold text-fg">{s[0]}</p>
+            {s[1] && <p className="mt-0.5 text-sm text-muted">{s[1]}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+// A checklist with green ticks: one item per line.
+export function Checklist({ raw }: { raw: string }) {
+  const data = rows(raw)
+  return (
+    <ul className="my-6 space-y-2">
+      {data.map((item, i) => (
+        <li
+          key={i}
+          className="flex items-start gap-3 rounded-xl border border-border bg-surface-2/40 p-3"
+        >
+          <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-success/15 text-success">
+            <Icon name="check" size={14} />
+          </span>
+          <span className="text-fg/90">{item[0]}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+// A styled spec / definition list: Label | Value
+export function KeyValue({ raw }: { raw: string }) {
+  const data = rows(raw)
+  return (
+    <dl className="my-6 divide-y divide-border overflow-hidden rounded-2xl border border-border">
+      {data.map((r, i) => (
+        <div key={i} className="flex items-center justify-between gap-4 px-4 py-3">
+          <dt className="text-sm text-muted">{r[0]}</dt>
+          <dd className="text-right font-medium text-fg">{r[1]}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+// Do / don't comparison cards: [Label] | Say/Do | Not.
+export function DoDont({ raw }: { raw: string }) {
+  const data = rows(raw)
+  return (
+    <div className="my-6 space-y-3">
+      {data.map((r, i) => {
+        const hasLabel = r.length >= 3
+        const label = hasLabel ? r[0] : ''
+        const good = hasLabel ? r[1] : r[0]
+        const bad = hasLabel ? r[2] : r[1]
+        return (
+          <div key={i} className="overflow-hidden rounded-2xl border border-border bg-surface">
+            {label && <div className="border-b border-border bg-surface-2/60 px-4 py-2 font-medium">{label}</div>}
+            <div className="grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+              <div className="p-3.5">
+                <span className="chip !bg-success/15 !text-success">
+                  <Icon name="check" size={13} /> Do
+                </span>
+                <p className="mt-1.5 text-sm text-fg/90">{good}</p>
+              </div>
+              <div className="p-3.5">
+                <span className="chip !bg-danger-soft !text-danger">
+                  <Icon name="close" size={13} /> Not
+                </span>
+                <p className="mt-1.5 text-sm text-muted">{bad}</p>
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -135,6 +228,10 @@ const WIDGETS: Record<string, (raw: string) => JSX.Element> = {
   orgchart: (raw) => <OrgChart raw={raw} />,
   shiftcards: (raw) => <ShiftCards raw={raw} />,
   stats: (raw) => <Stats raw={raw} />,
+  steps: (raw) => <Steps raw={raw} />,
+  checklist: (raw) => <Checklist raw={raw} />,
+  keyvalue: (raw) => <KeyValue raw={raw} />,
+  dodont: (raw) => <DoDont raw={raw} />,
 }
 
 // Returns a widget renderer for a `language-xxx` className, or null.

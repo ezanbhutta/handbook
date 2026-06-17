@@ -4,7 +4,7 @@ import { useNavigation, useOnboarding } from '@/lib/queries'
 import { roleLabel } from '@/lib/roles'
 import { Logo } from '@/components/Logo'
 import { SearchBar } from '@/components/SearchBar'
-import { Icon } from '@/components/Icon'
+import { Icon, chapterIcon } from '@/components/Icon'
 import { LoadingState, EmptyState } from '@/components/States'
 
 export function Home() {
@@ -50,26 +50,29 @@ export function Home() {
               <li key={c.id}>
                 <Link
                   to={`/chapter/${c.slug}`}
-                  className="group flex items-baseline gap-4 py-4 transition-colors"
+                  className="group flex items-center gap-4 py-3.5 transition-colors"
                 >
-                  <span className="w-7 shrink-0 font-serif text-lg tabular-nums text-muted">
-                    {i + 1}
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-surface-2 text-brand transition-colors group-hover:bg-brand-soft">
+                    <Icon name={chapterIcon(c.icon)} size={21} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="font-serif text-xl font-medium group-hover:text-brand">
-                      {c.title}
+                    <span className="flex items-baseline gap-2">
+                      <span className="text-xs font-semibold tabular-nums text-muted">{i + 1}</span>
+                      <span className="font-serif text-lg font-medium group-hover:text-brand">
+                        {c.title}
+                      </span>
                     </span>
                     {c.description && (
-                      <span className="mt-0.5 block truncate text-sm text-muted">
-                        {c.description}
-                      </span>
+                      <span className="block truncate text-sm text-muted">{c.description}</span>
                     )}
                   </span>
-                  <span className="shrink-0 text-sm tabular-nums text-muted">{c.sections.length}</span>
+                  <span className="shrink-0 text-xs tabular-nums text-muted">
+                    {c.sections.length}
+                  </span>
                   <Icon
                     name="chevron-right"
                     size={18}
-                    className="shrink-0 self-center text-muted transition-transform group-hover:translate-x-0.5"
+                    className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
                   />
                 </Link>
               </li>
