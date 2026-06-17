@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useNavigation } from '@/lib/queries'
 import { Icon, chapterIcon } from './Icon'
 import { Spinner } from './States'
@@ -77,6 +77,7 @@ function ChapterItem({
   onNavigate?: () => void
 }) {
   const [open, setOpen] = useState(defaultOpen)
+  const location = useLocation()
   return (
     <div>
       <div className="flex items-center">
@@ -106,23 +107,25 @@ function ChapterItem({
       </div>
       {open && sections.length > 0 && (
         <ul className="ml-5 mt-0.5 border-l border-border pl-2">
-          {sections.map((s) => (
-            <li key={s.id}>
-              <NavLink
-                to={`/section/${s.slug}`}
-                onClick={onNavigate}
-                className={({ isActive }) =>
-                  `block rounded-lg px-3 py-2 text-sm transition-colors ${
-                    isActive
+          {sections.map((s) => {
+            const current =
+              location.pathname === `/chapter/${slug}` && location.hash === `#s-${s.slug}`
+            return (
+              <li key={s.id}>
+                <Link
+                  to={`/chapter/${slug}#s-${s.slug}`}
+                  onClick={onNavigate}
+                  className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                    current
                       ? 'font-medium text-brand'
                       : 'text-muted hover:bg-surface-2 hover:text-fg'
-                  }`
-                }
-              >
-                {s.title}
-              </NavLink>
-            </li>
-          ))}
+                  }`}
+                >
+                  {s.title}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>

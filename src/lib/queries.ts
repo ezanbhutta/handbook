@@ -32,6 +32,9 @@ export type SectionListItem = {
   slug: string
   order_index: number
   show_in_onboarding: boolean
+  body: string
+  video_url: string | null
+  updated_at: string
 }
 export type SectionView = {
   id: string
@@ -123,6 +126,9 @@ export function useChapter(slug: string | undefined) {
             slug: s.slug,
             order_index: s.order_index,
             show_in_onboarding: s.show_in_onboarding,
+            body: s.body,
+            video_url: s.video_url,
+            updated_at: s.updated_at,
           })),
         }
       }
@@ -136,11 +142,11 @@ export function useChapter(slug: string | undefined) {
       if (!chapter) return null
       const { data: sections, error: sErr } = await supabase
         .from('sections')
-        .select('id, title, slug, order_index, show_in_onboarding')
+        .select('id, title, slug, order_index, show_in_onboarding, body, video_url, updated_at')
         .eq('chapter_id', chapter.id)
         .order('order_index')
       if (sErr) throw sErr
-      return { chapter, sections: sections ?? [] }
+      return { chapter, sections: (sections ?? []) as SectionListItem[] }
     },
   })
 }

@@ -273,6 +273,9 @@ export type Database = {
           slug: string
           order_index: number
           show_in_onboarding: boolean
+          body: string
+          video_url: string | null
+          updated_at: string
         }[]
       }
       section_for_token: {
