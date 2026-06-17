@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useChapter } from '@/lib/queries'
-import { Icon, chapterIcon } from '@/components/Icon'
+import { Icon } from '@/components/Icon'
 import { LoadingState, ErrorState, EmptyState } from '@/components/States'
 
 export function Chapter() {
@@ -20,50 +20,52 @@ export function Chapter() {
   const { chapter, sections } = data
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <nav className="mb-4">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-fg">
-          <Icon name="arrow-left" size={16} />
-          Home
-        </Link>
-      </nav>
+    <div className="book-page">
+      <Link to="/" className="eyebrow inline-flex items-center gap-1.5 hover:underline">
+        <Icon name="arrow-left" size={14} />
+        Handbook
+      </Link>
 
-      <header className="mb-6 flex items-start gap-4">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
-          <Icon name={chapterIcon(chapter.icon)} size={26} />
-        </span>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{chapter.title}</h1>
-          {chapter.description && <p className="mt-1.5 text-muted">{chapter.description}</p>}
-        </div>
-      </header>
+      <h1 className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight sm:text-[2.6rem]">
+        {chapter.title}
+      </h1>
+      {chapter.description && (
+        <p className="mt-3 font-serif text-xl leading-relaxed text-muted">{chapter.description}</p>
+      )}
+
+      <hr className="my-7 border-border" />
 
       {sections.length === 0 ? (
         <EmptyState icon="book" title="Nothing here yet">
           This chapter doesn’t have any sections you can see right now.
         </EmptyState>
       ) : (
-        <ul className="space-y-2">
-          {sections.map((s) => (
-            <li key={s.id}>
-              <Link
-                to={`/section/${s.slug}`}
-                className="group flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3.5 transition-colors hover:border-brand/40 hover:bg-surface-2"
-              >
-                <Icon name="book" size={18} className="shrink-0 text-muted" />
-                <span className="min-w-0 flex-1 font-medium text-fg">{s.title}</span>
-                {s.show_in_onboarding && (
-                  <span className="chip-brand hidden sm:inline-flex">Start here</span>
-                )}
-                <Icon
-                  name="chevron-right"
-                  size={18}
-                  className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
-                />
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <>
+          <h2 className="eyebrow mb-1">In this chapter</h2>
+          <ol className="divide-y divide-border">
+            {sections.map((s, i) => (
+              <li key={s.id}>
+                <Link
+                  to={`/section/${s.slug}`}
+                  className="group flex items-center gap-4 py-3.5 transition-colors hover:text-brand"
+                >
+                  <span className="w-6 shrink-0 font-serif text-lg tabular-nums text-muted">
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1 font-serif text-lg font-medium">{s.title}</span>
+                  {s.show_in_onboarding && (
+                    <span className="chip-brand hidden sm:inline-flex">Start here</span>
+                  )}
+                  <Icon
+                    name="chevron-right"
+                    size={18}
+                    className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </>
       )}
     </div>
   )
