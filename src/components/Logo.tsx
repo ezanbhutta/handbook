@@ -1,4 +1,4 @@
-// The official HaseebMadeIt mark — a violet rounded square with the white
+// The official HaseebMadeit mark — a violet rounded square with the white
 // "pulse" bars. Self-contained (its own background), so it reads on any theme.
 export function Logo({ size = 36, className }: { size?: number; className?: string }) {
   return (
@@ -8,7 +8,7 @@ export function Logo({ size = 36, className }: { size?: number; className?: stri
       viewBox="0 0 392.35 392.35"
       className={className}
       role="img"
-      aria-label="HaseebMadeIt"
+      aria-label="HaseebMadeit"
     >
       <rect width="392.35" height="392.35" rx="84" fill="#7229FF" />
       <path

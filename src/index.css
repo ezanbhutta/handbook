@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* =============================================================================
-   HaseebMadeIt design system — violet brand, three reading themes.
+   HaseebMadeit design system — violet brand, three reading themes.
    Tokens are `R G B` triplets so Tailwind applies opacity via
    rgb(var(--token) / <alpha>). Day is the default; Night and Reading override.
    Text/background pairs are chosen for comfortable long-form reading.

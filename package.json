@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "HaseebMadeIt company handbook — single source of truth, role-derived access, intelligent search.",
+  "description": "HaseebMadeit company handbook: single source of truth, role-derived access, intelligent search.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

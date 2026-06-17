@@ -8,7 +8,7 @@ import {
 } from 'react'
 
 // Three reading environments (brief: "Day, Night, Reading mode"):
-//  - day:     bright HaseebMadeIt violet on near-white.
+//  - day:     bright HaseebMadeit violet on near-white.
 //  - night:   deep indigo, easy on the eyes after dark.
 //  - reading: warm cream + serif body, book-like for long reads.
 export type Theme = 'day' | 'night' | 'reading'

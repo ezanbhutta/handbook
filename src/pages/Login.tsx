@@ -46,7 +46,7 @@ export function Login() {
         <div className="mb-7 flex flex-col items-center text-center">
           <Logo size={56} className="drop-shadow-[0_10px_30px_rgba(114,41,255,0.35)]" />
           <h1 className="mt-4 text-2xl font-bold tracking-tight">
-            Haseeb<span className="text-brand">MadeIt</span> Handbook
+            Haseeb<span className="text-brand">Madeit</span> Handbook
           </h1>
           <p className="mt-1 text-sm text-muted">Sign in to your account to continue.</p>
         </div>
