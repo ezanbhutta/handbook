@@ -12,12 +12,14 @@ import { useAuth } from './auth'
 import type { UserRole } from './database.types'
 
 const TOKEN_KEY = 'hb_link_token'
+const INFO_KEY = 'hb_link_info'
 
 // How the current visitor is reading the handbook:
 //  - 'authed': the founder is logged in (can author; sees everything).
 //  - 'token':  a teammate opened their role link (no login, read-only).
 //  - 'none':   no session and no valid link.
 type AccessMode = 'authed' | 'token' | 'none'
+type LinkInfo = { role: UserRole; label: string | null }
 
 type AccessState = {
   ready: boolean
@@ -32,17 +34,31 @@ type AccessState = {
 
 const AccessContext = createContext<AccessState | undefined>(undefined)
 
+function readCachedInfo(): LinkInfo | null {
+  try {
+    const raw = localStorage.getItem(INFO_KEY)
+    return raw ? (JSON.parse(raw) as LinkInfo) : null
+  } catch {
+    return null
+  }
+}
+
 export function AccessProvider({ children }: { children: ReactNode }) {
   const { session, profile, loading: authLoading } = useAuth()
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY))
-  // undefined = still validating, null = invalid/absent, object = valid link
-  const [tokenInfo, setTokenInfo] = useState<
-    { role: UserRole; label: string | null } | null | undefined
-  >(() => (localStorage.getItem(TOKEN_KEY) ? undefined : null))
+  // undefined = still validating with nothing cached, null = invalid/absent,
+  // object = valid link (possibly from cache, so the app opens instantly).
+  const [tokenInfo, setTokenInfo] = useState<LinkInfo | null | undefined>(() => {
+    if (!localStorage.getItem(TOKEN_KEY)) return null
+    return readCachedInfo() ?? undefined
+  })
 
   const authed = Boolean(session && profile)
 
-  // Validate the stored token (only matters when not logged in).
+  // Re-validate the stored token in the background. If we already have a cached
+  // role the UI is showing, so this just confirms or corrects it without a
+  // loading spinner. Content RPCs validate the token server-side regardless,
+  // so an optimistic render is safe.
   useEffect(() => {
     let active = true
     if (authed) return
@@ -50,12 +66,23 @@ export function AccessProvider({ children }: { children: ReactNode }) {
       setTokenInfo(null)
       return
     }
-    setTokenInfo(undefined)
-    supabase.rpc('link_info', { p_token: token }).then(({ data }) => {
-      if (!active) return
-      const row = data?.[0]
-      setTokenInfo(row ? { role: row.role, label: row.label } : null)
-    })
+    void (async () => {
+      try {
+        const { data } = await supabase.rpc('link_info', { p_token: token })
+        if (!active) return
+        const row = data?.[0]
+        if (row) {
+          const info = { role: row.role, label: row.label }
+          setTokenInfo(info)
+          localStorage.setItem(INFO_KEY, JSON.stringify(info))
+        } else {
+          localStorage.removeItem(INFO_KEY)
+          setTokenInfo(null)
+        }
+      } catch {
+        /* offline or transient: keep whatever we have cached */
+      }
+    })()
     return () => {
       active = false
     }
@@ -65,14 +92,17 @@ export function AccessProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase.rpc('link_info', { p_token: t })
     const row = data?.[0]
     if (!row) return false
+    const info = { role: row.role, label: row.label }
     localStorage.setItem(TOKEN_KEY, t)
+    localStorage.setItem(INFO_KEY, JSON.stringify(info))
     setToken(t)
-    setTokenInfo({ role: row.role, label: row.label })
+    setTokenInfo(info)
     return true
   }, [])
 
   const clearToken = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(INFO_KEY)
     setToken(null)
     setTokenInfo(null)
   }, [])
@@ -94,7 +124,7 @@ export function AccessProvider({ children }: { children: ReactNode }) {
       }
     }
     if (token && tokenInfo === undefined) {
-      // still validating the link
+      // first visit with no cache: validating
       return { ready: false, mode: 'none', role: null, label: null, token, isAdmin: false, ...base }
     }
     if (token && tokenInfo) {
