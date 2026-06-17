@@ -169,8 +169,10 @@ export function Steps({ raw }: { raw: string }) {
               <span className="my-1.5 w-0.5 grow rounded bg-gradient-to-b from-brand/40 to-border" />
             )}
           </div>
-          <div className="pb-7 pt-1">
-            <p className="font-semibold text-fg">{s[0]}</p>
+          <div className="pb-7">
+            <p className="flex min-h-[2.25rem] items-center font-semibold leading-tight text-fg">
+              {s[0]}
+            </p>
             {s[1] && <p className="mt-1 text-sm leading-relaxed text-muted">{s[1]}</p>}
           </div>
         </li>
