@@ -1,51 +1,58 @@
 import { Link } from 'react-router-dom'
 import { useChangeLog, type ChangeView } from '@/lib/queries'
 import { formatDateTime } from '@/lib/format'
-import { Icon } from '@/components/Icon'
+import { Icon, type IconName } from '@/components/Icon'
+import { PulseMotif } from '@/components/PulseMotif'
 import { LoadingState, ErrorState, EmptyState } from '@/components/States'
 
-const TYPE_META = {
-  created: { label: 'New', icon: 'plus', cls: 'bg-success/15 text-success' },
-  updated: { label: 'Updated', icon: 'edit', cls: 'bg-brand-soft text-brand' },
-  deleted: { label: 'Removed', icon: 'trash', cls: 'bg-danger-soft text-danger' },
-} as const
+const TYPE_META: Record<
+  ChangeView['type'],
+  { label: string; icon: IconName; node: string; chip: string }
+> = {
+  created: { label: 'New', icon: 'plus', node: 'bg-success text-white', chip: 'bg-success/15 text-success' },
+  updated: { label: 'Updated', icon: 'edit', node: 'bg-brand text-brand-fg', chip: 'bg-brand-soft text-brand' },
+  deleted: { label: 'Removed', icon: 'trash', node: 'bg-danger text-white', chip: 'bg-danger-soft text-danger' },
+}
 
-function Entry({ entry }: { entry: ChangeView }) {
+function Entry({ entry, last, index }: { entry: ChangeView; last: boolean; index: number }) {
   const meta = TYPE_META[entry.type]
   const linkable = entry.section?.slug && entry.type !== 'deleted'
 
-  const body = (
-    <div className="flex gap-3.5">
-      <span
-        className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full ${meta.cls}`}
-      >
-        <Icon name={meta.icon} size={16} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-semibold text-fg">
-            {entry.section_title ?? 'Handbook update'}
-          </span>
-          <span className={`chip !py-0.5 ${meta.cls}`}>{meta.label}</span>
-        </div>
-        <p className="mt-0.5 text-sm text-fg/80">{entry.summary}</p>
-        <p className="mt-1 text-xs text-muted">{formatDateTime(entry.created_at)}</p>
+  const inner = (
+    <>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-serif text-lg font-semibold text-fg">
+          {entry.section_title ?? 'Handbook update'}
+        </span>
+        <span className={`chip !py-0.5 ${meta.chip}`}>{meta.label}</span>
       </div>
-      {linkable && <Icon name="chevron-right" size={18} className="mt-2 shrink-0 text-muted" />}
-    </div>
+      <p className="mt-1 text-sm text-fg/80">{entry.summary}</p>
+      <p className="mt-1.5 text-xs text-muted">{formatDateTime(entry.created_at)}</p>
+    </>
   )
 
   return (
-    <li>
+    <li
+      className="animate-rise relative pl-14"
+      style={{ animationDelay: `${Math.min(index * 45, 360)}ms` }}
+    >
+      {/* Timeline node + connecting rail */}
+      <span
+        className={`absolute left-3 top-1 grid h-8 w-8 place-items-center rounded-full shadow-soft ring-4 ring-surface ${meta.node}`}
+      >
+        <Icon name={meta.icon} size={15} />
+      </span>
+      {!last && <span className="absolute left-7 top-9 -bottom-4 w-px bg-border" aria-hidden="true" />}
+
       {linkable ? (
         <Link
           to={`/section/${entry.section!.slug}`}
-          className="block rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-brand/40 hover:bg-surface-2"
+          className="group block rounded-2xl border border-border bg-surface p-4 transition duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-soft"
         >
-          {body}
+          {inner}
         </Link>
       ) : (
-        <div className="rounded-2xl border border-border bg-surface p-4">{body}</div>
+        <div className="rounded-2xl border border-border bg-surface p-4">{inner}</div>
       )}
     </li>
   )
@@ -55,17 +62,21 @@ export function WhatsNew() {
   const { data: entries = [], isLoading, error } = useChangeLog()
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <header className="mb-6 flex items-start gap-4">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
-          <Icon name="sparkles" size={26} />
-        </span>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">What’s New</h1>
-          <p className="mt-1.5 text-muted">
-            Every recent change to the handbook you can see, newest first.
-          </p>
+    <div className="book-page overflow-hidden">
+      <header className="cover-aurora relative -mx-6 -mt-10 mb-8 overflow-hidden rounded-t-2xl px-6 pb-8 pt-10 sm:-mx-12 sm:-mt-14 sm:px-12 sm:pb-9 sm:pt-12 lg:-mx-16 lg:px-16">
+        <div className="flex items-center gap-3">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand text-brand-fg shadow-soft">
+            <Icon name="sparkles" size={26} />
+          </span>
+          <div>
+            <p className="eyebrow">The handbook, kept current</p>
+            <PulseMotif height={13} className="mt-1.5 text-brand" />
+          </div>
         </div>
+        <h1 className="mt-4 font-serif text-3xl font-bold tracking-tight sm:text-[2.4rem]">
+          What’s New
+        </h1>
+        <p className="mt-2 text-muted">Every recent change you can see, newest first.</p>
       </header>
 
       {isLoading ? (
@@ -77,11 +88,11 @@ export function WhatsNew() {
           When your admin publishes or updates a section, it’ll show up here.
         </EmptyState>
       ) : (
-        <ul className="space-y-3">
-          {entries.map((e) => (
-            <Entry key={e.id} entry={e} />
+        <ol className="space-y-4">
+          {entries.map((e, i) => (
+            <Entry key={e.id} entry={e} index={i} last={i === entries.length - 1} />
           ))}
-        </ul>
+        </ol>
       )}
     </div>
   )

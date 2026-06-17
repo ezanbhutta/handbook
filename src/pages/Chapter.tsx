@@ -67,6 +67,17 @@ export function Chapter() {
           className="relative mt-3 overflow-hidden rounded-2xl border border-border p-6 sm:p-8"
           style={{ background: `linear-gradient(135deg, ${accent}1f, ${accent}08 45%, transparent 75%)` }}
         >
+          {/* Faint accent dot texture, fading out across the panel */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(${accent}1f 1px, transparent 1.5px)`,
+              backgroundSize: '17px 17px',
+              WebkitMaskImage: 'linear-gradient(120deg, #000, transparent 62%)',
+              maskImage: 'linear-gradient(120deg, #000, transparent 62%)',
+            }}
+          />
           {/* Oversized chapter numeral, a quiet graphic in the corner */}
           {label && (
             <span

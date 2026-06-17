@@ -158,6 +158,7 @@
      Built from the theme's brand token, so it adapts to day, night, reading. */
   .cover-aurora {
     background:
+      radial-gradient(rgb(var(--color-brand) / 0.07) 1px, transparent 1.5px) 0 0 / 20px 20px,
       radial-gradient(120% 130% at 0% 0%, rgb(var(--color-brand) / 0.20), transparent 52%),
       radial-gradient(120% 130% at 100% 0%, rgb(var(--color-brand) / 0.12), transparent 55%),
       linear-gradient(180deg, rgb(var(--color-brand-soft) / 0.55), rgb(var(--color-surface)) 92%);
