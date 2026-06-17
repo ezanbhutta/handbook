@@ -4,6 +4,7 @@ import rehypeSanitize from 'rehype-sanitize'
 import { useNavigate } from 'react-router-dom'
 import { isValidElement, type ReactNode } from 'react'
 import { Icon, type IconName } from './Icon'
+import { widgetFor } from './widgets'
 
 // A blockquote that starts with a known label (e.g. "> **Rule:** …") becomes a
 // visually-distinct callout. Grounded in NN/g layer-cake scanning research:
@@ -84,6 +85,8 @@ function useComponents(): Components {
       )
     },
     code: ({ className, children }) => {
+      const widget = widgetFor(className)
+      if (widget) return widget(nodeText(children))
       const isBlock = /language-/.test(className ?? '')
       if (isBlock) return <code className={className}>{children}</code>
       return (
@@ -92,11 +95,18 @@ function useComponents(): Components {
         </code>
       )
     },
-    pre: ({ children }) => (
-      <pre className="my-4 overflow-x-auto rounded-xl bg-surface-2 p-4 text-sm font-mono leading-relaxed">
-        {children}
-      </pre>
-    ),
+    pre: ({ children }) => {
+      // Widget code blocks render as full-width graphics, not a code box.
+      const cls = isValidElement(children)
+        ? (children.props as { className?: string }).className
+        : undefined
+      if (widgetFor(cls)) return <>{children}</>
+      return (
+        <pre className="my-4 overflow-x-auto rounded-xl bg-surface-2 p-4 text-sm font-mono leading-relaxed">
+          {children}
+        </pre>
+      )
+    },
     img: ({ src, alt }) => (
       <img
         src={typeof src === 'string' ? src : undefined}
