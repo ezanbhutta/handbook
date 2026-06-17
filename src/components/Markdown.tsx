@@ -42,7 +42,7 @@ function useComponents(): Components {
       </h2>
     ),
     h3: ({ children }) => <h3 className="mt-6 mb-2 text-lg font-semibold">{children}</h3>,
-    p: ({ children }) => <p className="my-4 text-fg/90">{children}</p>,
+    p: ({ children }) => <p className="my-4 text-justify text-fg/90 [hyphens:none]">{children}</p>,
     a: ({ href, children }) => {
       const internal = href?.startsWith('/')
       return (

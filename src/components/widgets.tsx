@@ -15,43 +15,67 @@ function rows(raw: string): string[][] {
     .filter((r) => r[0])
 }
 
-function chips(list: string | undefined) {
-  if (!list?.trim()) return null
-  return (
-    <div className="mt-1.5 flex flex-wrap justify-center gap-1">
-      {list
-        .split(',')
-        .map((p) => p.trim())
-        .filter(Boolean)
-        .map((p) => (
-          <span key={p} className="chip-brand">
-            {p}
-          </span>
-        ))}
-    </div>
-  )
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  const first = parts[0]?.[0] ?? ''
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
+  return (first + last).toUpperCase()
 }
 
-// A top-down org chart: each level is a card, joined by a connector line.
+function people(list: string | undefined): string[] {
+  return (list ?? '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+}
+
+// A top-down org chart: each level is a centred card with avatar chips for the
+// people, joined by a clean connector. Scales from one column on phones up.
 export function OrgChart({ raw }: { raw: string }) {
   const levels = rows(raw)
   return (
-    <div className="my-7 flex flex-col items-center">
-      {levels.map((lvl, i) => (
-        <div key={i} className="flex w-full flex-col items-center">
-          <div className="w-full max-w-sm rounded-2xl border border-brand/30 bg-gradient-to-br from-brand-soft/70 to-surface p-4 text-center shadow-soft">
-            <p className="font-serif text-lg font-bold text-fg">{lvl[0]}</p>
-            {chips(lvl[1])}
-            {lvl[2] && <p className="mt-2 text-sm text-muted">{lvl[2]}</p>}
-          </div>
-          {i < levels.length - 1 && (
-            <div className="flex flex-col items-center" aria-hidden="true">
-              <span className="h-6 w-px bg-brand/40" />
-              <span className="-mt-1 h-2 w-2 rounded-full bg-brand/50" />
+    <div className="my-8 flex flex-col items-center">
+      {levels.map((lvl, i) => {
+        const team = people(lvl[1])
+        return (
+          <div key={i} className="flex w-full flex-col items-center">
+            <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-brand/20 bg-surface text-center shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand">
+              <div className="h-1.5 w-full bg-gradient-to-r from-brand via-brand/70 to-brand/40" />
+              <div className="p-5">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand">
+                    {i + 1}
+                  </span>
+                  <p className="font-serif text-xl font-bold leading-tight text-fg">{lvl[0]}</p>
+                </div>
+                {team.length > 0 && (
+                  <div className="mt-3 flex flex-wrap justify-center gap-1.5">
+                    {team.map((p) => (
+                      <span
+                        key={p}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand-soft/50 py-1 pl-1 pr-2.5 text-sm font-medium text-brand"
+                      >
+                        <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-[10px] font-bold text-brand-fg">
+                          {initials(p)}
+                        </span>
+                        {p}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {lvl[2] && (
+                  <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">{lvl[2]}</p>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      ))}
+            {i < levels.length - 1 && (
+              <div className="flex h-8 flex-col items-center justify-center" aria-hidden="true">
+                <span className="h-full w-0.5 rounded bg-gradient-to-b from-brand/50 to-brand/15" />
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -66,7 +90,7 @@ const SHIFT_THEME: Record<string, { color: string; icon: IconName }> = {
 export function ShiftCards({ raw }: { raw: string }) {
   const data = rows(raw)
   return (
-    <div className="my-6 grid gap-3 sm:grid-cols-3">
+    <div className="my-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {data.map((s, i) => {
         const theme = SHIFT_THEME[s[0]?.toLowerCase()] ?? { color: 'rgb(114 41 255)', icon: 'calendar' as IconName }
         const members = (s[3] ?? '')
@@ -74,7 +98,10 @@ export function ShiftCards({ raw }: { raw: string }) {
           .map((m) => m.trim())
           .filter(Boolean)
         return (
-          <div key={i} className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
+          <div
+            key={i}
+            className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand"
+          >
             <div className="h-1.5" style={{ background: theme.color }} />
             <div className="p-4">
               <div className="flex items-center gap-2">
@@ -140,14 +167,16 @@ export function Steps({ raw }: { raw: string }) {
       {data.map((s, i) => (
         <li key={i} className="flex gap-4">
           <div className="flex flex-col items-center">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand font-bold text-brand-fg">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-brand/70 text-sm font-bold text-brand-fg shadow-soft ring-4 ring-brand-soft/50">
               {i + 1}
             </span>
-            {i < data.length - 1 && <span className="my-1 w-px grow bg-border" />}
+            {i < data.length - 1 && (
+              <span className="my-1.5 w-0.5 grow rounded bg-gradient-to-b from-brand/40 to-border" />
+            )}
           </div>
-          <div className="pb-6">
+          <div className="pb-7 pt-1">
             <p className="font-semibold text-fg">{s[0]}</p>
-            {s[1] && <p className="mt-0.5 text-sm text-muted">{s[1]}</p>}
+            {s[1] && <p className="mt-1 text-sm leading-relaxed text-muted">{s[1]}</p>}
           </div>
         </li>
       ))}
