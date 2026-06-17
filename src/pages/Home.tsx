@@ -1,76 +1,73 @@
 import { Link } from 'react-router-dom'
 import { useAccess } from '@/lib/access'
-import { useNavigation, useOnboarding } from '@/lib/queries'
+import { useNavigation, useOnboarding, useLatestChange } from '@/lib/queries'
 import { roleLabel } from '@/lib/roles'
-import { WhatsNewBanner } from '@/components/WhatsNewBanner'
+import { Logo } from '@/components/Logo'
 import { SearchBar } from '@/components/SearchBar'
-import { Icon, chapterIcon } from '@/components/Icon'
+import { Icon } from '@/components/Icon'
 import { LoadingState, EmptyState } from '@/components/States'
-
-function greeting(): string {
-  const h = new Date().getHours()
-  if (h < 12) return 'Good morning'
-  if (h < 18) return 'Good afternoon'
-  return 'Good evening'
-}
 
 export function Home() {
   const { role } = useAccess()
   const { data: chapters = [], isLoading } = useNavigation()
   const { data: onboarding = [] } = useOnboarding()
+  const { data: latest } = useLatestChange()
 
   return (
-    <div className="mx-auto max-w-4xl space-y-7">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{greeting()}.</h1>
-        <p className="mt-1 text-muted">
-          Everything you need to know, in one place
-          {role && (
-            <>
-              {' '}
-              — you’re viewing the <span className="font-medium text-fg">{roleLabel(role)}</span>{' '}
-              handbook
-            </>
-          )}
-          .
+    <div className="book-page">
+      {/* Title page */}
+      <header className="text-center">
+        <Logo size={56} className="mx-auto drop-shadow-[0_10px_30px_rgba(114,41,255,0.35)]" />
+        <p className="eyebrow mt-5">HaseebMadeit · Design &amp; Branding Agency</p>
+        <h1 className="mt-2 font-serif text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+          The Company Handbook
+        </h1>
+        <p className="mx-auto mt-3 max-w-md font-serif text-lg leading-relaxed text-muted">
+          Everything you need to know, in one place.
         </p>
-      </div>
+        {role && (
+          <span className="chip-brand mt-4 inline-flex">{roleLabel(role)} edition</span>
+        )}
+      </header>
 
-      <WhatsNewBanner />
+      <hr className="my-8 border-border" />
 
-      {/* Prominent search — the primary way in. */}
-      <div className="rounded-2xl border border-border bg-gradient-to-br from-brand-soft/60 to-surface p-5 shadow-soft sm:p-6">
-        <label className="mb-2 block text-sm font-semibold text-fg">Looking for something?</label>
-        <SearchBar size="lg" placeholder="Search dress code, leave, refunds, ClickUp…" />
-        <p className="mt-2 hint">Tip: search works with typos and everyday words.</p>
-      </div>
+      {/* Search */}
+      <SearchBar size="lg" placeholder="Search the handbook…" />
 
+      {/* Compact "what's new" line */}
+      {latest && (
+        <Link
+          to={latest.section?.slug ? `/section/${latest.section.slug}` : '/whats-new'}
+          className="mt-3 flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg"
+        >
+          <Icon name="sparkles" size={15} className="shrink-0 text-brand" />
+          <span className="truncate">
+            <span className="font-medium text-brand">Latest update</span> ·{' '}
+            {latest.section_title ?? latest.summary}
+          </span>
+        </Link>
+      )}
+
+      {/* Start here (front matter) */}
       {onboarding.length > 0 && (
-        <section aria-labelledby="start-here">
-          <div className="mb-3 flex items-center gap-2">
-            <Icon name="badge" size={20} className="text-brand" />
-            <h2 id="start-here" className="text-lg font-bold">
-              Start here{role && ` for ${roleLabel(role)}`}
-            </h2>
-          </div>
-          <ol className="space-y-2">
+        <section className="mt-8">
+          <h2 className="eyebrow mb-2">Start here{role && ` · ${roleLabel(role)}`}</h2>
+          <ol className="space-y-1.5">
             {onboarding.map((s, i) => (
               <li key={s.id}>
                 <Link
                   to={`/section/${s.slug}`}
-                  className="group flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 transition-colors hover:border-brand/40 hover:bg-surface-2"
+                  className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-surface-2"
                 >
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-soft text-sm font-bold text-brand">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-soft text-xs font-bold text-brand">
                     {i + 1}
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-fg">{s.title}</p>
-                    {s.chapters && <p className="truncate text-xs text-muted">{s.chapters.title}</p>}
-                  </div>
+                  <span className="min-w-0 flex-1 truncate font-serif text-lg">{s.title}</span>
                   <Icon
                     name="chevron-right"
-                    size={18}
-                    className="text-muted transition-transform group-hover:translate-x-0.5"
+                    size={16}
+                    className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
                   />
                 </Link>
               </li>
@@ -79,39 +76,48 @@ export function Home() {
         </section>
       )}
 
-      <section aria-labelledby="chapters">
-        <h2 id="chapters" className="mb-3 text-lg font-bold">
-          Browse the handbook
-        </h2>
+      {/* Table of contents */}
+      <section className="mt-8">
+        <h2 className="eyebrow mb-1">Contents</h2>
         {isLoading ? (
           <LoadingState />
         ) : chapters.length === 0 ? (
-          <EmptyState icon="book" title="No content yet">
+          <EmptyState icon="book" title="The book is empty">
             Chapters appear here once content you can see has been published.
           </EmptyState>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {chapters.map((c) => (
-              <Link
-                key={c.id}
-                to={`/chapter/${c.slug}`}
-                className="group flex gap-3.5 rounded-2xl border border-border bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-soft"
-              >
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-surface-2 text-brand transition-colors group-hover:bg-brand-soft">
-                  <Icon name={chapterIcon(c.icon)} size={22} />
-                </span>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-fg">{c.title}</h3>
-                  {c.description && (
-                    <p className="mt-0.5 line-clamp-2 text-sm text-muted">{c.description}</p>
-                  )}
-                  <p className="mt-1.5 text-xs font-medium text-muted">
-                    {c.sections.length} {c.sections.length === 1 ? 'section' : 'sections'}
-                  </p>
-                </div>
-              </Link>
+          <ol className="divide-y divide-border">
+            {chapters.map((c, i) => (
+              <li key={c.id}>
+                <Link
+                  to={`/chapter/${c.slug}`}
+                  className="group flex items-baseline gap-4 py-4 transition-colors"
+                >
+                  <span className="w-7 shrink-0 font-serif text-lg tabular-nums text-muted">
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="font-serif text-xl font-medium group-hover:text-brand">
+                      {c.title}
+                    </span>
+                    {c.description && (
+                      <span className="mt-0.5 block truncate text-sm text-muted">
+                        {c.description}
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0 text-sm tabular-nums text-muted">
+                    {c.sections.length}
+                  </span>
+                  <Icon
+                    name="chevron-right"
+                    size={18}
+                    className="shrink-0 self-center text-muted transition-transform group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </li>
             ))}
-          </div>
+          </ol>
         )}
       </section>
     </div>
