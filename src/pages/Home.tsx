@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAccess } from '@/lib/access'
-import { useNavigation, useOnboarding, useLatestChange } from '@/lib/queries'
+import { useNavigation, useOnboarding } from '@/lib/queries'
 import { roleLabel } from '@/lib/roles'
 import { Logo } from '@/components/Logo'
 import { SearchBar } from '@/components/SearchBar'
@@ -11,73 +11,32 @@ export function Home() {
   const { role } = useAccess()
   const { data: chapters = [], isLoading } = useNavigation()
   const { data: onboarding = [] } = useOnboarding()
-  const { data: latest } = useLatestChange()
 
   return (
     <div className="book-page">
-      {/* Title page */}
-      <header className="text-center">
-        <Logo size={56} className="mx-auto drop-shadow-[0_10px_30px_rgba(114,41,255,0.35)]" />
-        <p className="eyebrow mt-5">HaseebMadeit · Design &amp; Branding Agency</p>
-        <h1 className="mt-2 font-serif text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+      {/* Cover / title page */}
+      <header className="py-8 text-center sm:py-12">
+        <Logo size={60} className="mx-auto drop-shadow-[0_12px_34px_rgba(114,41,255,0.35)]" />
+        <p className="eyebrow mt-7">HaseebMadeit · Design &amp; Branding Agency</p>
+        <h1 className="mt-3 font-serif text-4xl font-bold leading-[1.05] tracking-tight sm:text-[3.25rem]">
           The Company Handbook
         </h1>
-        <p className="mx-auto mt-3 max-w-md font-serif text-lg leading-relaxed text-muted">
+        <p className="mx-auto mt-4 max-w-md font-serif text-lg italic leading-relaxed text-muted">
           Everything you need to know, in one place.
         </p>
-        {role && (
-          <span className="chip-brand mt-4 inline-flex">{roleLabel(role)} edition</span>
-        )}
+        <p className="mt-7 text-sm text-muted">Abdul Haseeb · CEO &amp; Founder</p>
+        {role && <span className="chip-brand mt-5 inline-flex">{roleLabel(role)} edition</span>}
       </header>
 
-      <hr className="my-8 border-border" />
+      <hr className="border-border" />
 
       {/* Search */}
-      <SearchBar size="lg" placeholder="Search the handbook…" />
-
-      {/* Compact "what's new" line */}
-      {latest && (
-        <Link
-          to={latest.section?.slug ? `/section/${latest.section.slug}` : '/whats-new'}
-          className="mt-3 flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg"
-        >
-          <Icon name="sparkles" size={15} className="shrink-0 text-brand" />
-          <span className="truncate">
-            <span className="font-medium text-brand">Latest update</span> ·{' '}
-            {latest.section_title ?? latest.summary}
-          </span>
-        </Link>
-      )}
-
-      {/* Start here (front matter) */}
-      {onboarding.length > 0 && (
-        <section className="mt-8">
-          <h2 className="eyebrow mb-2">Start here{role && ` · ${roleLabel(role)}`}</h2>
-          <ol className="space-y-1.5">
-            {onboarding.map((s, i) => (
-              <li key={s.id}>
-                <Link
-                  to={s.chapters ? `/chapter/${s.chapters.slug}#s-${s.slug}` : `/section/${s.slug}`}
-                  className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-surface-2"
-                >
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-soft text-xs font-bold text-brand">
-                    {i + 1}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate font-serif text-lg">{s.title}</span>
-                  <Icon
-                    name="chevron-right"
-                    size={16}
-                    className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
+      <div className="mt-8">
+        <SearchBar size="lg" placeholder="Search the handbook…" />
+      </div>
 
       {/* Table of contents */}
-      <section className="mt-8">
+      <section className="mt-9">
         <h2 className="eyebrow mb-1">Contents</h2>
         {isLoading ? (
           <LoadingState />
@@ -106,9 +65,7 @@ export function Home() {
                       </span>
                     )}
                   </span>
-                  <span className="shrink-0 text-sm tabular-nums text-muted">
-                    {c.sections.length}
-                  </span>
+                  <span className="shrink-0 text-sm tabular-nums text-muted">{c.sections.length}</span>
                   <Icon
                     name="chevron-right"
                     size={18}
@@ -120,6 +77,26 @@ export function Home() {
           </ol>
         )}
       </section>
+
+      {/* New here? — kept, but quiet and below the contents */}
+      {onboarding.length > 0 && (
+        <section className="mt-10 rounded-2xl border border-border bg-surface-2/40 p-4 sm:p-5">
+          <h2 className="eyebrow mb-2">New here? Start with these</h2>
+          <ul className="space-y-0.5">
+            {onboarding.slice(0, 5).map((s) => (
+              <li key={s.id}>
+                <Link
+                  to={s.chapters ? `/chapter/${s.chapters.slug}#s-${s.slug}` : `/section/${s.slug}`}
+                  className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-surface"
+                >
+                  <Icon name="chevron-right" size={14} className="shrink-0 text-brand" />
+                  <span className="min-w-0 flex-1 truncate font-medium">{s.title}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   )
 }
