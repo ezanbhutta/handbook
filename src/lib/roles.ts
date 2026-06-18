@@ -1,10 +1,11 @@
 import type { UserRole } from './database.types'
 
-// The six roles, in a stable display order. Identity = role; the admin flag is
+// The roles, in a stable display order. Identity = role; the admin flag is
 // separate and grants author/approve power.
 export const ALL_ROLES: UserRole[] = [
   'csr',
   'asr',
+  'designer',
   'hr',
   'pm',
   'manager',
@@ -14,6 +15,7 @@ export const ALL_ROLES: UserRole[] = [
 export const ROLE_LABELS: Record<UserRole, string> = {
   csr: 'CSR',
   asr: 'ASR',
+  designer: 'Designer',
   hr: 'HR',
   pm: 'Project Manager',
   manager: 'Manager',
@@ -23,6 +25,7 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
   csr: 'Customer Service Representative',
   asr: 'After-Sales Representative',
+  designer: 'Design Team',
   hr: 'Human Resources',
   pm: 'Project Manager',
   manager: 'Team Manager',

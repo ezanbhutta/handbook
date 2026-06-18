@@ -1,7 +1,7 @@
 // Hand-written to mirror supabase/migrations. Keep in sync with the schema
 // (or regenerate with `supabase gen types typescript`).
 
-export type UserRole = 'csr' | 'asr' | 'hr' | 'pm' | 'manager' | 'office_boy'
+export type UserRole = 'csr' | 'asr' | 'designer' | 'hr' | 'pm' | 'manager' | 'office_boy'
 export type ChangeType = 'created' | 'updated' | 'deleted'
 
 export type Database = {
