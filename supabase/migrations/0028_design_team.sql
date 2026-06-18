@@ -13,7 +13,10 @@ alter table roster add column if not exists working_time text;
 
 -- Role-aware reader: everyone but a designer sees the whole roster; a designer
 -- token sees only the design team, so CSR names never reach a designer.
-create or replace function roster_for_token(p_token text)
+-- (Dropped first because the returned columns change, which CREATE OR REPLACE
+-- cannot do.)
+drop function if exists roster_for_token(text);
+create function roster_for_token(p_token text)
 returns table (
   id uuid, name text, role text, shift text, off_day text,
   specialty text, working_time text, order_index int, active boolean
