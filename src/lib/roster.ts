@@ -12,11 +12,13 @@ export type RosterMember = {
   role: string
   shift: string | null
   off_day: string | null
+  specialty: string | null
+  working_time: string | null
   order_index: number
   active: boolean
 }
 
-export const ROSTER_ROLES = ['CEO', 'Team Leader', 'Senior', 'Project Manager', 'CSR'] as const
+export const ROSTER_ROLES = ['CEO', 'Team Leader', 'Senior', 'Project Manager', 'CSR', 'Designer'] as const
 export const ROSTER_SHIFTS = ['Morning', 'Evening', 'Night'] as const
 export const OFF_DAYS = [
   'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
@@ -36,7 +38,7 @@ export function useRoster() {
       }
       const { data, error } = await supabase
         .from('roster')
-        .select('id, name, role, shift, off_day, order_index, active')
+        .select('id, name, role, shift, off_day, specialty, working_time, order_index, active')
         .eq('active', true)
         .order('order_index')
       if (error) throw error
@@ -64,6 +66,8 @@ export type RosterInput = {
   role: string
   shift: string | null
   off_day: string | null
+  specialty: string | null
+  working_time: string | null
   order_index: number
   active: boolean
 }

@@ -63,8 +63,10 @@ export function AdminRoster() {
                 </p>
                 <p className="truncate text-xs text-muted">
                   {m.role}
+                  {m.specialty ? ` · ${m.specialty}` : ''}
                   {m.shift ? ` · ${m.shift}` : ''}
                   {m.off_day ? ` · Off ${m.off_day}` : ''}
+                  {m.working_time ? ` · ${m.working_time}` : ''}
                 </p>
               </div>
               <button
@@ -124,8 +126,12 @@ function RosterForm({
   const [role, setRole] = useState<string>(member?.role ?? 'CSR')
   const [shift, setShift] = useState<string>(member?.shift ?? '')
   const [offDay, setOffDay] = useState<string>(member?.off_day ?? '')
+  const [specialty, setSpecialty] = useState<string>(member?.specialty ?? '')
+  const [workingTime, setWorkingTime] = useState<string>(member?.working_time ?? '')
   const [active, setActive] = useState<boolean>(member?.active ?? true)
   const [error, setError] = useState('')
+
+  const isDesigner = role === 'Designer'
 
   const save = useMutation({
     mutationFn: async () => {
@@ -134,6 +140,8 @@ function RosterForm({
         role,
         shift: shift || null,
         off_day: offDay || null,
+        specialty: specialty.trim() || null,
+        working_time: workingTime.trim() || null,
         order_index: member?.order_index ?? nextOrder,
         active,
       }
@@ -180,25 +188,52 @@ function RosterForm({
             ))}
           </select>
         </div>
-        <div>
-          <label className="label" htmlFor="r-shift">Shift</label>
-          <select id="r-shift" className="input" value={shift} onChange={(e) => setShift(e.target.value)}>
-            <option value="">No shift</option>
-            {ROSTER_SHIFTS.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-          <p className="mt-1 hint">CSRs and shift leads sit under their shift. Leave blank for the CEO or PM.</p>
-        </div>
-        <div>
-          <label className="label" htmlFor="r-off">Day off</label>
-          <select id="r-off" className="input" value={offDay} onChange={(e) => setOffDay(e.target.value)}>
-            <option value="">Not set</option>
-            {OFF_DAYS.map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-        </div>
+        {isDesigner ? (
+          <>
+            <div>
+              <label className="label" htmlFor="r-specialty">Specialty</label>
+              <input
+                id="r-specialty"
+                className="input"
+                value={specialty}
+                onChange={(e) => setSpecialty(e.target.value)}
+                placeholder="e.g. Branding, Logo, Animation"
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="r-working">Working time</label>
+              <input
+                id="r-working"
+                className="input"
+                value={workingTime}
+                onChange={(e) => setWorkingTime(e.target.value)}
+                placeholder="e.g. 9:00 AM to 6:00 PM"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <label className="label" htmlFor="r-shift">Shift</label>
+              <select id="r-shift" className="input" value={shift} onChange={(e) => setShift(e.target.value)}>
+                <option value="">No shift</option>
+                {ROSTER_SHIFTS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <p className="mt-1 hint">CSRs and shift leads sit under their shift. Leave blank for the CEO or PM.</p>
+            </div>
+            <div>
+              <label className="label" htmlFor="r-off">Day off</label>
+              <select id="r-off" className="input" value={offDay} onChange={(e) => setOffDay(e.target.value)}>
+                <option value="">Not set</option>
+                {OFF_DAYS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
         <label className="flex items-center gap-2.5 text-sm">
           <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
           Show in the handbook

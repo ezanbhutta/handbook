@@ -212,6 +212,8 @@ export type Database = {
           role: string
           shift: string | null
           off_day: string | null
+          specialty: string | null
+          working_time: string | null
           order_index: number
           active: boolean
           created_at: string
@@ -223,6 +225,8 @@ export type Database = {
           role?: string
           shift?: string | null
           off_day?: string | null
+          specialty?: string | null
+          working_time?: string | null
           order_index?: number
           active?: boolean
           created_at?: string
@@ -234,6 +238,8 @@ export type Database = {
           role?: string
           shift?: string | null
           off_day?: string | null
+          specialty?: string | null
+          working_time?: string | null
           order_index?: number
           active?: boolean
           updated_at?: string
@@ -388,6 +394,8 @@ export type Database = {
           role: string
           shift: string | null
           off_day: string | null
+          specialty: string | null
+          working_time: string | null
           order_index: number
           active: boolean
         }[]
