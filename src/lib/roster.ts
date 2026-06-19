@@ -18,7 +18,18 @@ export type RosterMember = {
   active: boolean
 }
 
-export const ROSTER_ROLES = ['CEO', 'Team Leader', 'Senior', 'Project Manager', 'CSR', 'Designer'] as const
+export const ROSTER_ROLES = [
+  'CEO',
+  'Admin',
+  'Manager',
+  'Team Leader',
+  'Senior',
+  'Project Manager',
+  'HR',
+  'CSR',
+  'Designer',
+  'Office Boy',
+] as const
 export const ROSTER_SHIFTS = ['Morning', 'Evening', 'Night'] as const
 export const OFF_DAYS = [
   'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',

@@ -15,6 +15,59 @@ import { Icon } from '@/components/Icon'
 import { Modal } from '@/components/Modal'
 import { LoadingState, InlineError, Spinner } from '@/components/States'
 
+// The roster, grouped into its own section per category in the admin view.
+const ROSTER_GROUPS: { role: string; label: string }[] = [
+  { role: 'CEO', label: 'CEO & Founder' },
+  { role: 'Admin', label: 'Admins' },
+  { role: 'Manager', label: 'Managers' },
+  { role: 'Team Leader', label: 'Team Leaders' },
+  { role: 'Senior', label: 'Seniors' },
+  { role: 'Project Manager', label: 'Project Managers' },
+  { role: 'HR', label: 'Human Resource' },
+  { role: 'CSR', label: 'CSRs' },
+  { role: 'Designer', label: 'Designers' },
+  { role: 'Office Boy', label: 'Office Boys' },
+]
+
+function MemberRow({
+  m,
+  onEdit,
+  onRemove,
+}: {
+  m: RosterRow
+  onEdit: () => void
+  onRemove: () => void
+}) {
+  const meta = [m.specialty, m.shift, m.off_day ? `Off ${m.off_day}` : '', m.working_time]
+    .filter(Boolean)
+    .join(' · ')
+  return (
+    <li className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3">
+      <div className="min-w-0 flex-1">
+        <p className="flex items-center gap-2 truncate font-semibold">
+          {m.name}
+          {!m.active && <span className="chip !bg-surface-2 !py-0.5 text-xs text-muted">Hidden</span>}
+        </p>
+        {meta && <p className="truncate text-xs text-muted">{meta}</p>}
+      </div>
+      <button
+        aria-label={`Edit ${m.name}`}
+        onClick={onEdit}
+        className="grid h-10 w-10 place-items-center rounded-xl text-muted hover:bg-surface-2"
+      >
+        <Icon name="edit" size={18} />
+      </button>
+      <button
+        aria-label={`Remove ${m.name}`}
+        onClick={onRemove}
+        className="grid h-10 w-10 place-items-center rounded-xl text-danger hover:bg-danger-soft/50"
+      >
+        <Icon name="trash" size={18} />
+      </button>
+    </li>
+  )
+}
+
 export function AdminRoster() {
   const qc = useQueryClient()
   const { data: roster = [], isLoading } = useAdminRoster()
@@ -48,52 +101,50 @@ export function AdminRoster() {
       {isLoading ? (
         <LoadingState />
       ) : (
-        <ul className="space-y-2">
-          {roster.map((m) => (
-            <li
-              key={m.id}
-              className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-2 truncate font-semibold">
-                  {m.name}
-                  {!m.active && (
-                    <span className="chip !bg-surface-2 !py-0.5 text-xs text-muted">Hidden</span>
-                  )}
-                </p>
-                <p className="truncate text-xs text-muted">
-                  {m.role}
-                  {m.specialty ? ` · ${m.specialty}` : ''}
-                  {m.shift ? ` · ${m.shift}` : ''}
-                  {m.off_day ? ` · Off ${m.off_day}` : ''}
-                  {m.working_time ? ` · ${m.working_time}` : ''}
-                </p>
-              </div>
-              <button
-                aria-label={`Edit ${m.name}`}
-                onClick={() => setEditing(m)}
-                className="grid h-10 w-10 place-items-center rounded-xl text-muted hover:bg-surface-2"
-              >
-                <Icon name="edit" size={18} />
-              </button>
-              <button
-                aria-label={`Remove ${m.name}`}
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      `Remove "${m.name}" from the roster? They will no longer appear anywhere in the handbook.`,
-                    )
-                  ) {
-                    remove.mutate(m.id)
-                  }
-                }}
-                className="grid h-10 w-10 place-items-center rounded-xl text-danger hover:bg-danger-soft/50"
-              >
-                <Icon name="trash" size={18} />
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="space-y-6">
+          {(() => {
+            const known = new Set(ROSTER_GROUPS.map((g) => g.role))
+            const groups = [
+              ...ROSTER_GROUPS.map((g) => ({
+                label: g.label,
+                members: roster.filter((m) => m.role === g.role),
+              })),
+              { label: 'Other', members: roster.filter((m) => !known.has(m.role)) },
+            ].filter((g) => g.members.length > 0)
+
+            if (groups.length === 0) {
+              return <p className="text-sm text-muted">No one on the roster yet.</p>
+            }
+
+            return groups.map((g) => (
+              <section key={g.label}>
+                <div className="mb-2 flex items-center gap-2.5">
+                  <h2 className="text-xs font-bold uppercase tracking-[0.12em] text-fg">{g.label}</h2>
+                  <span className="text-xs tabular-nums text-muted">{g.members.length}</span>
+                  <span className="h-px flex-1 bg-border" />
+                </div>
+                <ul className="space-y-2">
+                  {g.members.map((m) => (
+                    <MemberRow
+                      key={m.id}
+                      m={m}
+                      onEdit={() => setEditing(m)}
+                      onRemove={() => {
+                        if (
+                          window.confirm(
+                            `Remove "${m.name}" from the roster? They will no longer appear anywhere in the handbook.`,
+                          )
+                        ) {
+                          remove.mutate(m.id)
+                        }
+                      }}
+                    />
+                  ))}
+                </ul>
+              </section>
+            ))
+          })()}
+        </div>
       )}
 
       {editing && (
