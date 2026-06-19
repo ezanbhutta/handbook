@@ -279,10 +279,10 @@ export function ShiftLoggerFlow() {
           <div className="mx-auto w-full max-w-[250px]">{s.art}</div>
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-brand/70 text-sm font-bold text-brand-fg shadow-soft">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-border bg-surface font-serif text-sm font-medium text-fg">
                 {i + 1}
               </span>
-              <h4 className="font-serif text-lg font-bold text-fg">{s.title}</h4>
+              <h4 className="font-serif text-lg font-medium text-fg">{s.title}</h4>
             </div>
             <p className="mt-1.5 text-sm leading-relaxed text-muted">{s.body}</p>
           </div>

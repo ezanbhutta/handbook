@@ -35,36 +35,31 @@ export function OrgChart({ raw }: { raw: string }) {
         const team = people(lvl[1])
         return (
           <div key={i} className="flex w-full flex-col items-center">
-            <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-brand/20 bg-surface text-center shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand">
-              <div className="h-1.5 w-full bg-gradient-to-r from-brand via-brand/70 to-brand/40" />
-              <div className="p-5">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand">
-                    {i + 1}
-                  </span>
-                  <p className="font-serif text-xl font-bold leading-tight text-fg">{lvl[0]}</p>
-                </div>
-                {team.length > 0 && (
-                  <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                    {team.map((p) => (
-                      <span
-                        key={p}
-                        className="inline-flex items-center rounded-full border border-brand/20 bg-brand-soft/50 px-3 py-1 text-sm font-medium text-brand"
-                      >
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {lvl[2] && (
-                  <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">{lvl[2]}</p>
-                )}
+            <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 text-center shadow-soft">
+              <div className="flex items-center justify-center gap-2.5">
+                <span className="font-serif text-sm tabular-nums text-muted">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <p className="font-serif text-xl font-medium leading-tight text-fg">{lvl[0]}</p>
               </div>
+              {team.length > 0 && (
+                <div className="mt-3.5 flex flex-wrap justify-center gap-1.5">
+                  {team.map((p) => (
+                    <span
+                      key={p}
+                      className="inline-flex items-center rounded-full border border-border px-3 py-1 text-sm font-medium text-fg/80"
+                    >
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {lvl[2] && (
+                <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">{lvl[2]}</p>
+              )}
             </div>
             {i < levels.length - 1 && (
-              <div className="flex h-8 flex-col items-center justify-center" aria-hidden="true">
-                <span className="h-full w-0.5 rounded bg-gradient-to-b from-brand/50 to-brand/15" />
-              </div>
+              <span className="h-8 w-px bg-border" aria-hidden="true" />
             )}
           </div>
         )
@@ -91,44 +86,37 @@ export function ShiftCards({ raw }: { raw: string }) {
           .map((m) => m.trim())
           .filter(Boolean)
         return (
-          <div
-            key={i}
-            className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand"
-          >
-            <div className="h-1.5" style={{ background: theme.color }} />
-            <div className="p-4">
-              <div className="flex items-center gap-2">
-                <span
-                  className="grid h-8 w-8 place-items-center rounded-lg text-white"
-                  style={{ background: theme.color }}
-                >
-                  <Icon name={theme.icon} size={17} />
-                </span>
-                <div>
-                  <p className="font-serif text-lg font-bold leading-none">{s[0]}</p>
-                  {s[1] && <p className="mt-0.5 text-xs text-muted">{s[1]}</p>}
-                </div>
+          <div key={i} className="rounded-2xl border border-border bg-surface p-4 shadow-soft">
+            <div className="flex items-center gap-2.5">
+              <span
+                className="grid h-8 w-8 place-items-center rounded-lg"
+                style={{ backgroundColor: `${theme.color}14`, color: theme.color }}
+              >
+                <Icon name={theme.icon} size={17} />
+              </span>
+              <div>
+                <p className="font-serif text-lg font-medium leading-none">{s[0]}</p>
+                {s[1] && <p className="mt-0.5 text-xs text-muted">{s[1]}</p>}
               </div>
-              {s[2] && (
-                <p className="mt-3 text-sm">
-                  <span className="text-muted">Lead: </span>
-                  <span className="font-medium">{s[2]}</span>
-                </p>
-              )}
-              {members.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {members.map((m) => (
-                    <span
-                      key={m}
-                      className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
-                      style={{ backgroundColor: `${theme.color}16`, color: theme.color }}
-                    >
-                      {m}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
+            {s[2] && (
+              <p className="mt-3 text-sm">
+                <span className="text-muted">Lead: </span>
+                <span className="font-medium">{s[2]}</span>
+              </p>
+            )}
+            {members.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {members.map((m) => (
+                  <span
+                    key={m}
+                    className="inline-flex items-center rounded-full border border-border px-3 py-1 text-sm font-medium text-fg/80"
+                  >
+                    {m}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         )
       })}
@@ -143,12 +131,9 @@ export function Stats({ raw }: { raw: string }) {
   return (
     <div className={`my-6 grid grid-cols-2 gap-3 ${cols}`}>
       {data.map((s, i) => (
-        <div
-          key={i}
-          className="rounded-2xl border border-border bg-gradient-to-br from-brand-soft/50 to-surface p-4 text-center shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand"
-        >
-          <p className="font-serif text-3xl font-bold leading-none text-brand">{s[0]}</p>
-          {s[1] && <p className="mt-1.5 text-sm text-muted">{s[1]}</p>}
+        <div key={i} className="rounded-2xl border border-border bg-surface p-5 text-center">
+          <p className="font-serif text-4xl font-medium leading-none text-fg">{s[0]}</p>
+          {s[1] && <p className="mt-2 text-sm text-muted">{s[1]}</p>}
         </div>
       ))}
     </div>
@@ -163,12 +148,10 @@ export function Steps({ raw }: { raw: string }) {
       {data.map((s, i) => (
         <li key={i} className="flex gap-4">
           <div className="flex flex-col items-center">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-brand/70 text-sm font-bold text-brand-fg shadow-soft ring-4 ring-brand-soft/50">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-surface font-serif text-sm font-medium text-fg">
               {i + 1}
             </span>
-            {i < data.length - 1 && (
-              <span className="my-1.5 w-0.5 grow rounded bg-gradient-to-b from-brand/40 to-border" />
-            )}
+            {i < data.length - 1 && <span className="my-1.5 w-px grow bg-border" />}
           </div>
           <div className="pb-7">
             <p className="flex min-h-[2.25rem] items-center font-semibold leading-tight text-fg">
@@ -186,14 +169,11 @@ export function Steps({ raw }: { raw: string }) {
 export function Checklist({ raw }: { raw: string }) {
   const data = rows(raw)
   return (
-    <ul className="my-6 space-y-2">
+    <ul className="my-6 space-y-2.5">
       {data.map((item, i) => (
-        <li
-          key={i}
-          className="flex items-start gap-3 rounded-xl border border-border bg-surface-2/40 p-3"
-        >
-          <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-success/15 text-success">
-            <Icon name="check" size={14} />
+        <li key={i} className="flex items-start gap-3">
+          <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-success/12 text-success">
+            <Icon name="check" size={13} />
           </span>
           <span className="text-fg/90">{item[0]}</span>
         </li>
@@ -206,7 +186,7 @@ export function Checklist({ raw }: { raw: string }) {
 export function KeyValue({ raw }: { raw: string }) {
   const data = rows(raw)
   return (
-    <dl className="my-6 divide-y divide-border overflow-hidden rounded-2xl border border-border">
+    <dl className="my-6 divide-y divide-border/70 overflow-hidden rounded-2xl border border-border/70">
       {data.map((r, i) => (
         <div key={i} className="flex items-center justify-between gap-4 px-4 py-3">
           <dt className="text-sm text-muted">{r[0]}</dt>

@@ -31,8 +31,8 @@ export function DesignTeamWidget() {
     <div className="my-6 grid gap-3 sm:grid-cols-2">
       {ordered.map(([specialty, members]) => (
         <div key={specialty} className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-          <div className="border-b border-border bg-brand-soft/40 px-4 py-2.5">
-            <p className="font-serif text-base font-bold text-brand">{specialty}</p>
+          <div className="border-b border-border bg-surface-2/60 px-4 py-2.5">
+            <p className="font-serif text-base font-medium text-fg">{specialty}</p>
             <p className="text-xs text-muted">
               {members.length} {members.length === 1 ? 'designer' : 'designers'}
             </p>

@@ -11,14 +11,14 @@ import { widgetFor } from './widgets'
 // rules and key points must stand out as their own block so readers catch them
 // while skimming.
 const CALLOUTS: Record<string, { icon: IconName; box: string; accent: string }> = {
-  rule: { icon: 'shield', box: 'border-danger/40 bg-danger-soft/40', accent: 'text-danger' },
-  important: { icon: 'alert', box: 'border-warning/40 bg-warning/10', accent: 'text-warning' },
-  warning: { icon: 'alert', box: 'border-warning/40 bg-warning/10', accent: 'text-warning' },
-  standard: { icon: 'check', box: 'border-brand/40 bg-brand-soft/50', accent: 'text-brand' },
-  tip: { icon: 'sparkles', box: 'border-success/40 bg-success/10', accent: 'text-success' },
-  'helping point': { icon: 'sparkles', box: 'border-success/40 bg-success/10', accent: 'text-success' },
-  'key principle': { icon: 'badge', box: 'border-brand/40 bg-brand-soft/50', accent: 'text-brand' },
-  note: { icon: 'help', box: 'border-border bg-surface-2', accent: 'text-muted' },
+  rule: { icon: 'shield', box: 'border-danger/25 bg-danger-soft/30', accent: 'text-danger' },
+  important: { icon: 'alert', box: 'border-warning/25 bg-warning/[0.06]', accent: 'text-warning' },
+  warning: { icon: 'alert', box: 'border-warning/25 bg-warning/[0.06]', accent: 'text-warning' },
+  standard: { icon: 'check', box: 'border-brand/25 bg-brand-soft/40', accent: 'text-brand' },
+  tip: { icon: 'sparkles', box: 'border-success/25 bg-success/[0.06]', accent: 'text-success' },
+  'helping point': { icon: 'sparkles', box: 'border-success/25 bg-success/[0.06]', accent: 'text-success' },
+  'key principle': { icon: 'badge', box: 'border-brand/25 bg-brand-soft/40', accent: 'text-brand' },
+  note: { icon: 'help', box: 'border-border bg-surface-2/60', accent: 'text-muted' },
 }
 
 function nodeText(node: ReactNode): string {
@@ -97,10 +97,10 @@ function useComponents(): Components {
       if (callout) {
         return (
           <div
-            className={`my-5 flex items-center gap-3 rounded-2xl border border-l-[5px] px-4 py-3.5 shadow-soft ${callout.box}`}
+            className={`my-5 flex items-start gap-3 rounded-2xl border border-l-[3px] px-4 py-3.5 ${callout.box}`}
           >
             <span
-              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface/70 ${callout.accent}`}
+              className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface/70 ${callout.accent}`}
             >
               <Icon name={callout.icon} size={16} />
             </span>
@@ -109,7 +109,7 @@ function useComponents(): Components {
         )
       }
       return (
-        <blockquote className="my-4 border-l-4 border-brand/40 bg-surface-2 rounded-r-xl px-4 py-2 text-fg/80">
+        <blockquote className="my-5 border-l-2 border-border bg-surface-2/50 rounded-r-xl px-4 py-2 text-fg/80">
           {children}
         </blockquote>
       )
@@ -159,7 +159,7 @@ function useComponents(): Components {
             <div className="space-y-3 sm:hidden">
               {rows.map((r, ri) => (
                 <div key={ri} className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-                  <div className="bg-brand-soft/50 px-3.5 py-2 font-serif font-semibold text-brand">{r[0]}</div>
+                  <div className="bg-surface-2 px-3.5 py-2 font-serif font-medium text-fg">{r[0]}</div>
                   <dl className="divide-y divide-border">
                     {r.slice(1).map((c, ci) => (
                       <div key={ci} className="flex justify-between gap-4 px-3.5 py-2 text-sm">

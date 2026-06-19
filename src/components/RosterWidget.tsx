@@ -49,35 +49,26 @@ export function RosterWidget() {
       <div className="flex flex-col items-center">
         {levels.map((lvl, i) => (
           <div key={lvl.label} className="flex w-full flex-col items-center">
-            <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-brand/20 bg-surface text-center shadow-soft">
-              <div className="h-1.5 w-full bg-gradient-to-r from-brand via-brand/70 to-brand/40" />
-              <div className="p-5">
-                <p className="font-serif text-xl font-bold leading-tight text-fg">{lvl.label}</p>
-                {lvl.people.length > 0 && (
-                  <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                    {lvl.people.map((p) => (
-                      <span
-                        key={p.id}
-                        className="inline-flex items-center rounded-full border border-brand/20 bg-brand-soft/50 px-3 py-1 text-sm font-medium text-brand"
-                      >
-                        {p.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {lvl.isCsr && csrCount > 0 && (
-                  <p className="mt-2 text-sm font-semibold text-brand">
-                    {csrCount} across three shifts
-                  </p>
-                )}
-                <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">{lvl.note}</p>
-              </div>
+            <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 text-center shadow-soft">
+              <p className="font-serif text-xl font-medium leading-tight text-fg">{lvl.label}</p>
+              {lvl.people.length > 0 && (
+                <div className="mt-3.5 flex flex-wrap justify-center gap-1.5">
+                  {lvl.people.map((p) => (
+                    <span
+                      key={p.id}
+                      className="inline-flex items-center rounded-full border border-border px-3 py-1 text-sm font-medium text-fg/80"
+                    >
+                      {p.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {lvl.isCsr && csrCount > 0 && (
+                <p className="mt-2.5 text-sm font-medium text-muted">{csrCount} across three shifts</p>
+              )}
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">{lvl.note}</p>
             </div>
-            {i < levels.length - 1 && (
-              <div className="flex h-8 flex-col items-center justify-center" aria-hidden="true">
-                <span className="h-full w-0.5 rounded bg-gradient-to-b from-brand/50 to-brand/15" />
-              </div>
-            )}
+            {i < levels.length - 1 && <span className="h-8 w-px bg-border" aria-hidden="true" />}
           </div>
         ))}
       </div>
@@ -92,21 +83,17 @@ export function RosterWidget() {
           const members = roster.filter((r) => r.shift === shift && r.role === 'CSR')
           if (!leads.length && !members.length) return null
           return (
-            <div
-              key={shift}
-              className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-brand"
-            >
-              <div className="h-1.5" style={{ background: meta.color }} />
+            <div key={shift} className="rounded-2xl border border-border bg-surface shadow-soft">
               <div className="p-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <span
-                    className="grid h-8 w-8 place-items-center rounded-lg text-white"
-                    style={{ background: meta.color }}
+                    className="grid h-8 w-8 place-items-center rounded-lg"
+                    style={{ backgroundColor: `${meta.color}14`, color: meta.color }}
                   >
                     <Icon name={meta.icon} size={17} />
                   </span>
                   <div>
-                    <p className="font-serif text-lg font-bold leading-none">{shift}</p>
+                    <p className="font-serif text-lg font-medium leading-none">{shift}</p>
                     <p className="mt-0.5 text-xs text-muted">{meta.hours}</p>
                   </div>
                 </div>
