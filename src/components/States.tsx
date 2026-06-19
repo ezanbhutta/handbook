@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Icon, type IconName } from './Icon'
+import { PulseMotif } from './PulseMotif'
 
 export function Spinner({ className }: { className?: string }) {
   return (
@@ -24,8 +25,8 @@ export function Spinner({ className }: { className?: string }) {
 
 export function LoadingState({ label = 'Loading…' }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2 py-16 text-muted" role="status">
-      <Spinner />
+    <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted" role="status">
+      <PulseMotif height={26} animate className="text-brand" />
       <span className="text-sm">{label}</span>
     </div>
   )

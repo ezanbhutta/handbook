@@ -216,7 +216,7 @@ export function Chapter() {
                 ) : null}
 
                 {s.body.trim() ? (
-                  <Markdown>{s.body}</Markdown>
+                  <Markdown lead={i === 0}>{s.body}</Markdown>
                 ) : (
                   <p className="text-muted">This section doesn’t have written content yet.</p>
                 )}

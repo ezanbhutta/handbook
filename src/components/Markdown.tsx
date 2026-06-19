@@ -182,10 +182,10 @@ function useComponents(): Components {
   }
 }
 
-export function Markdown({ children }: { children: string }) {
+export function Markdown({ children, lead = false }: { children: string; lead?: boolean }) {
   const components = useComponents()
   return (
-    <div className="prose-body text-fg">
+    <div className={`prose-body text-fg ${lead ? 'prose-lead' : ''}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSanitize]}

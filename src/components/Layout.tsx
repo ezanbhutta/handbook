@@ -9,6 +9,7 @@ import { NavTree } from './NavTree'
 import { UserMenu } from './UserMenu'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { LoadingState } from './States'
+import { CommandPalette } from './CommandPalette'
 
 function Brand() {
   return (
@@ -34,16 +35,32 @@ function RoleBadge() {
 
 export function Layout() {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const location = useLocation()
   const { mode } = useAccess()
 
-  useEffect(() => setDrawerOpen(false), [location.pathname])
+  useEffect(() => {
+    setDrawerOpen(false)
+    setPaletteOpen(false)
+  }, [location.pathname])
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
     }
   }, [drawerOpen])
+
+  // ⌘K / Ctrl+K opens the command palette anywhere.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   return (
     <div className="min-h-dvh">
@@ -60,21 +77,28 @@ export function Layout() {
 
           <Brand />
 
-          <div className="mx-auto hidden w-full max-w-xl md:block">
-            <SearchBar />
-          </div>
+          <button
+            type="button"
+            onClick={() => setPaletteOpen(true)}
+            className="mx-auto hidden h-10 w-full max-w-md items-center gap-2.5 rounded-xl border border-border bg-surface-2/50 px-3.5 text-sm text-muted transition-colors hover:bg-surface-2 md:flex"
+          >
+            <Icon name="search" size={18} />
+            <span className="flex-1 text-left">Search or jump to…</span>
+            <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 text-[10px] font-semibold">⌘K</kbd>
+          </button>
 
           <div className="ml-auto flex items-center gap-1.5 md:ml-0">
             <div className="hidden sm:block">
               <ThemeSwitcher />
             </div>
-            <Link
-              to="/search"
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
               aria-label="Search"
               className="grid h-11 w-11 place-items-center rounded-xl hover:bg-surface-2 md:hidden"
             >
               <Icon name="search" />
-            </Link>
+            </button>
             {mode === 'authed' ? <UserMenu /> : <RoleBadge />}
           </div>
         </div>
@@ -89,7 +113,9 @@ export function Layout() {
 
         <main className="min-w-0 flex-1 py-5 pb-20">
           <Suspense fallback={<LoadingState />}>
-            <Outlet />
+            <div key={location.pathname} className="animate-rise">
+              <Outlet />
+            </div>
           </Suspense>
         </main>
       </div>
@@ -125,6 +151,8 @@ export function Layout() {
           </div>
         </div>
       )}
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   )
 }

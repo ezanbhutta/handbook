@@ -12,10 +12,12 @@ export function PulseMotif({
   height = 18,
   className,
   style,
+  animate = false,
 }: {
   height?: number
   className?: string
   style?: CSSProperties
+  animate?: boolean
 }) {
   const width = BARS.length * (BAR_W + GAP) - GAP
   return (
@@ -29,7 +31,16 @@ export function PulseMotif({
       focusable="false"
     >
       {BARS.map((h, i) => (
-        <rect key={i} x={i * (BAR_W + GAP)} y={(BOX - h) / 2} width={BAR_W} height={h} rx={BAR_W / 2} />
+        <rect
+          key={i}
+          x={i * (BAR_W + GAP)}
+          y={(BOX - h) / 2}
+          width={BAR_W}
+          height={h}
+          rx={BAR_W / 2}
+          className={animate ? 'pulse-bar' : undefined}
+          style={animate ? { animationDelay: `${i * 110}ms` } : undefined}
+        />
       ))}
     </svg>
   )

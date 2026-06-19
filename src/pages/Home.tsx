@@ -28,7 +28,7 @@ export function Home() {
         </p>
         <div className="mt-6 flex items-center justify-center gap-3 text-brand">
           <span className="h-px w-8 bg-brand/30" />
-          <PulseMotif height={16} />
+          <PulseMotif height={18} animate />
           <span className="h-px w-8 bg-brand/30" />
         </div>
         <p className="mt-6 text-sm font-medium text-muted">Abdul Haseeb · CEO &amp; Founder</p>
