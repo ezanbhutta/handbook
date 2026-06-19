@@ -133,14 +133,14 @@ export function Chapter() {
               <section key={s.id} id={`s-${s.slug}`} className="scroll-mt-24">
                 <hr className={`border-border/70 ${i === 0 ? 'mt-12' : 'mt-16'}`} />
                 <div className="mb-6 mt-9 flex items-start justify-between gap-3">
-                  <div className="flex items-baseline gap-3.5">
+                  <div>
                     <span
-                      className="shrink-0 font-serif text-base tabular-nums"
+                      className="font-serif text-sm tabular-nums tracking-wide"
                       style={{ color: accent }}
                     >
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <h2 className="font-serif text-2xl font-medium leading-tight tracking-tight sm:text-[1.9rem]">
+                    <h2 className="mt-1.5 font-serif text-2xl font-medium leading-tight tracking-tight sm:text-[1.9rem]">
                       {s.title}
                     </h2>
                   </div>
