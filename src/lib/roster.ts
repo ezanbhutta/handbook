@@ -22,7 +22,6 @@ export const ROSTER_ROLES = [
   'CEO',
   'Admin',
   'Manager',
-  'Team Leader',
   'Senior',
   'Project Manager',
   'HR',

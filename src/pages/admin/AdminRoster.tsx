@@ -20,7 +20,6 @@ const ROSTER_GROUPS: { role: string; label: string }[] = [
   { role: 'CEO', label: 'CEO & Founder' },
   { role: 'Admin', label: 'Admins' },
   { role: 'Manager', label: 'Managers' },
-  { role: 'Team Leader', label: 'Team Leaders' },
   { role: 'Senior', label: 'Seniors' },
   { role: 'Project Manager', label: 'Project Managers' },
   { role: 'HR', label: 'Human Resource' },
@@ -182,7 +181,8 @@ function RosterForm({
   const [active, setActive] = useState<boolean>(member?.active ?? true)
   const [error, setError] = useState('')
 
-  const isDesigner = role === 'Designer'
+  const showSpecialty = role === 'Designer'
+  const showWorkingTime = role === 'Designer' || role === 'Manager'
 
   const save = useMutation({
     mutationFn: async () => {
@@ -239,29 +239,29 @@ function RosterForm({
             ))}
           </select>
         </div>
-        {isDesigner ? (
-          <>
-            <div>
-              <label className="label" htmlFor="r-specialty">Specialty</label>
-              <input
-                id="r-specialty"
-                className="input"
-                value={specialty}
-                onChange={(e) => setSpecialty(e.target.value)}
-                placeholder="e.g. Branding, Logo, Animation"
-              />
-            </div>
-            <div>
-              <label className="label" htmlFor="r-working">Working time</label>
-              <input
-                id="r-working"
-                className="input"
-                value={workingTime}
-                onChange={(e) => setWorkingTime(e.target.value)}
-                placeholder="e.g. 9:00 AM to 6:00 PM"
-              />
-            </div>
-          </>
+        {showSpecialty && (
+          <div>
+            <label className="label" htmlFor="r-specialty">Specialty</label>
+            <input
+              id="r-specialty"
+              className="input"
+              value={specialty}
+              onChange={(e) => setSpecialty(e.target.value)}
+              placeholder="e.g. Branding, Logo, Animation"
+            />
+          </div>
+        )}
+        {showWorkingTime ? (
+          <div>
+            <label className="label" htmlFor="r-working">Working time</label>
+            <input
+              id="r-working"
+              className="input"
+              value={workingTime}
+              onChange={(e) => setWorkingTime(e.target.value)}
+              placeholder="e.g. 9 AM to 9 PM"
+            />
+          </div>
         ) : (
           <>
             <div>

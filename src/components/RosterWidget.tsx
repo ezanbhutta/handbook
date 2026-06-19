@@ -15,8 +15,8 @@ const SHIFT_ORDER = ['Morning', 'Evening', 'Night']
 const LEVELS = [
   { roles: ['CEO'], label: 'CEO and Founder', note: 'Final calls, scores, and the big decisions.' },
   {
-    roles: ['Team Leader', 'Senior'],
-    label: 'Team Leaders and Seniors',
+    roles: ['Manager', 'Senior'],
+    label: 'Managers and Seniors',
     note: 'Run the shifts, handle escalations and cancellations, and coach the team.',
   },
   {
@@ -56,9 +56,12 @@ export function RosterWidget() {
                   {lvl.people.map((p) => (
                     <span
                       key={p.id}
-                      className="inline-flex items-center rounded-full border border-border px-3 py-1 text-sm font-medium text-fg/80"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-sm font-medium text-fg/80"
                     >
                       {p.name}
+                      {p.working_time && (
+                        <span className="font-normal text-muted">· {p.working_time}</span>
+                      )}
                     </span>
                   ))}
                 </div>
@@ -78,7 +81,7 @@ export function RosterWidget() {
         {SHIFT_ORDER.map((shift) => {
           const meta = SHIFT_META[shift]
           const leads = roster.filter(
-            (r) => r.shift === shift && (r.role === 'Team Leader' || r.role === 'Senior'),
+            (r) => r.shift === shift && (r.role === 'Manager' || r.role === 'Senior'),
           )
           const members = roster.filter((r) => r.shift === shift && r.role === 'CSR')
           if (!leads.length && !members.length) return null
