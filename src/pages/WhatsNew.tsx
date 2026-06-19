@@ -63,7 +63,7 @@ export function WhatsNew() {
 
   return (
     <div className="book-page overflow-hidden">
-      <header className="cover-aurora relative -mx-6 -mt-10 mb-8 overflow-hidden rounded-t-2xl px-6 pb-8 pt-10 sm:-mx-12 sm:-mt-14 sm:px-12 sm:pb-9 sm:pt-12 lg:-mx-16 lg:px-16">
+      <header className="cover-aurora relative -mx-6 -mt-12 mb-9 overflow-hidden rounded-t-2xl px-6 pb-9 pt-12 sm:-mx-14 sm:-mt-16 sm:px-14 sm:pb-10 sm:pt-14 lg:-mx-20 lg:-mt-20 lg:px-20">
         <div className="flex items-center gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand text-brand-fg shadow-soft">
             <Icon name="sparkles" size={26} />

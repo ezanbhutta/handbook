@@ -6,8 +6,7 @@ import { driveEmbedUrl } from '@/lib/video'
 import { chapterAccent, chapterNumber } from '@/lib/accent'
 import { setActiveSection } from '@/lib/scrollspy'
 import { Markdown } from '@/components/Markdown'
-import { Icon, chapterIcon } from '@/components/Icon'
-import { PulseMotif } from '@/components/PulseMotif'
+import { Icon } from '@/components/Icon'
 import { ReadingProgress } from '@/components/ReadingProgress'
 import { LoadingState, ErrorState, EmptyState } from '@/components/States'
 
@@ -95,54 +94,28 @@ export function Chapter() {
           <Icon name="arrow-left" size={14} />
           Handbook
         </Link>
-        <header
-          className="relative mt-3 overflow-hidden rounded-2xl border border-border p-6 sm:p-8"
-          style={{ background: `linear-gradient(135deg, ${accent}1f, ${accent}08 45%, transparent 75%)` }}
-        >
-          {/* Faint accent dot texture, fading out across the panel */}
+        <header className="mt-5">
           <span
+            className="mb-6 block h-1 w-12 rounded-full"
+            style={{ background: accent }}
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(${accent}1f 1px, transparent 1.5px)`,
-              backgroundSize: '17px 17px',
-              WebkitMaskImage: 'linear-gradient(120deg, #000, transparent 62%)',
-              maskImage: 'linear-gradient(120deg, #000, transparent 62%)',
-            }}
           />
-          {/* Oversized chapter numeral, a quiet graphic in the corner */}
-          {label && (
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-3 -top-7 select-none font-serif font-bold leading-none"
-              style={{ color: accent, opacity: 0.1, fontSize: '9.5rem' }}
-            >
-              {label}
-            </span>
-          )}
-          <div className="relative flex items-center gap-3">
-            <span
-              className="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-white shadow-soft"
-              style={{ background: accent }}
-            >
-              <Icon name={chapterIcon(chapter.icon)} size={26} />
-            </span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: accent }}>
-                {label ? `Chapter ${label}` : 'Chapter'}
-              </p>
-              <PulseMotif height={13} className="mt-1.5" style={{ color: accent, opacity: 0.55 }} />
-            </div>
-          </div>
-          <h1 className="relative mt-4 font-serif text-3xl font-bold leading-tight tracking-tight sm:text-[2.6rem]">
+          <p className="eyebrow">{label ? `Chapter ${label}` : 'Chapter'}</p>
+          <h1 className="mt-3 font-serif text-[2.5rem] font-medium leading-[1.06] tracking-tight sm:text-[3.25rem]">
             {chapter.title}
           </h1>
           {chapter.description && (
-            <p className="relative mt-2.5 font-serif text-xl leading-relaxed text-muted">{chapter.description}</p>
+            <p className="mt-4 max-w-2xl font-serif text-xl italic leading-relaxed text-muted">
+              {chapter.description}
+            </p>
           )}
           {sections.length > 0 && (
-            <p className="relative mt-3 text-sm text-muted">
-              {sections.length} {sections.length === 1 ? 'section' : 'sections'} · {totalRead} min read
+            <p className="mt-6 flex items-center gap-3 text-sm text-muted">
+              <span>
+                {sections.length} {sections.length === 1 ? 'section' : 'sections'}
+              </span>
+              <span className="h-1 w-1 rounded-full bg-muted/40" />
+              <span>{totalRead} min read</span>
             </p>
           )}
         </header>
@@ -158,23 +131,16 @@ export function Chapter() {
             const embed = driveEmbedUrl(s.video_url)
             return (
               <section key={s.id} id={`s-${s.slug}`} className="scroll-mt-24">
-                <div
-                  className={`flex items-center gap-3 ${i === 0 ? 'mt-8' : 'mt-12'} mb-5`}
-                  aria-hidden="true"
-                >
-                  <span className="h-px flex-1 bg-border" />
-                  <PulseMotif height={13} style={{ color: accent, opacity: 0.7 }} />
-                  <span className="h-px flex-1 bg-border" />
-                </div>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
+                <hr className={`border-border/70 ${i === 0 ? 'mt-12' : 'mt-16'}`} />
+                <div className="mb-6 mt-9 flex items-start justify-between gap-3">
+                  <div className="flex items-baseline gap-3.5">
                     <span
-                      className="mt-1 grid h-7 min-w-[1.75rem] shrink-0 place-items-center rounded-lg px-1.5 text-sm font-bold text-white"
-                      style={{ background: accent }}
+                      className="shrink-0 font-serif text-base tabular-nums"
+                      style={{ color: accent }}
                     >
-                      {i + 1}
+                      {String(i + 1).padStart(2, '0')}
                     </span>
-                    <h2 className="font-serif text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+                    <h2 className="font-serif text-2xl font-medium leading-tight tracking-tight sm:text-[1.9rem]">
                       {s.title}
                     </h2>
                   </div>

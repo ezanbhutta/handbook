@@ -144,24 +144,23 @@
     @apply rounded-2xl border border-border bg-surface;
   }
 
-  /* A section rendered as a book page: a wide, left-aligned A4-style sheet with
-     generous margins, so chapters and sections sit flush to the left. */
+  /* A section rendered as a book page: a wide, left-aligned sheet with generous
+     margins and a fine border, so the page reads calm and considered. */
   .book-page {
-    @apply max-w-[58rem] rounded-2xl border border-border bg-surface
-           px-6 py-10 shadow-soft sm:px-12 sm:py-14 lg:px-16;
+    @apply max-w-[58rem] rounded-2xl border border-border/70 bg-surface
+           px-6 py-12 shadow-soft sm:px-14 sm:py-16 lg:px-20 lg:py-20;
   }
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand;
+    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-muted;
   }
 
-  /* A soft brand "aurora" wash for the cover spread and other hero panels.
-     Built from the theme's brand token, so it adapts to day, night, reading. */
+  /* A quiet brand wash for the cover spread — a single soft glow and a faint
+     grain, mostly white space. Adapts to day, night, and reading. */
   .cover-aurora {
     background:
-      radial-gradient(rgb(var(--color-brand) / 0.07) 1px, transparent 1.5px) 0 0 / 20px 20px,
-      radial-gradient(120% 130% at 0% 0%, rgb(var(--color-brand) / 0.20), transparent 52%),
-      radial-gradient(120% 130% at 100% 0%, rgb(var(--color-brand) / 0.12), transparent 55%),
-      linear-gradient(180deg, rgb(var(--color-brand-soft) / 0.55), rgb(var(--color-surface)) 92%);
+      radial-gradient(rgb(var(--color-brand) / 0.04) 1px, transparent 1.5px) 0 0 / 22px 22px,
+      radial-gradient(120% 120% at 50% 0%, rgb(var(--color-brand) / 0.1), transparent 60%),
+      linear-gradient(180deg, rgb(var(--color-brand-soft) / 0.35), rgb(var(--color-surface)) 80%);
   }
 
   .chip {
@@ -177,23 +176,23 @@
   .prose-body {
     font-family: var(--font-prose);
     font-size: 1.0625rem; /* 17px — book body */
-    line-height: 1.8;
+    line-height: 1.85;
   }
   /* The opening line reads like a book's standfirst/lead. */
   .prose-body > p:first-child {
     font-size: 1.1875rem; /* 19px */
-    line-height: 1.65;
+    line-height: 1.7;
     color: rgb(var(--color-fg));
   }
-  /* An editorial drop cap on a chapter's opening paragraph. */
+  /* A refined ink drop cap on a chapter's opening paragraph. */
   .prose-lead > p:first-child::first-letter {
     float: left;
-    margin: 0.4rem 0.7rem 0 0;
+    margin: 0.35rem 0.65rem 0 0;
     font-family: var(--font-prose);
-    font-weight: 700;
-    font-size: 3.4rem;
-    line-height: 0.72;
-    color: rgb(var(--color-brand));
+    font-weight: 600;
+    font-size: 3.6rem;
+    line-height: 0.7;
+    color: rgb(var(--color-fg));
   }
   /* A drop-cap-free but book-like first heading rhythm. */
   .prose-body > h2:first-child,

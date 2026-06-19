@@ -61,12 +61,12 @@ function useComponents(): Components {
   return {
     h1: ({ children }) => <h1 className="mt-8 mb-3 text-2xl font-bold tracking-tight">{children}</h1>,
     h2: ({ children }) => (
-      <h2 className="mt-7 mb-2.5 text-xl font-bold tracking-tight border-b border-border pb-1.5">
-        {children}
-      </h2>
+      <h2 className="mt-10 mb-3 text-2xl font-medium tracking-tight">{children}</h2>
     ),
-    h3: ({ children }) => <h3 className="mt-6 mb-2 text-lg font-semibold">{children}</h3>,
-    p: ({ children }) => <p className="my-4 text-justify text-fg/90 [hyphens:none]">{children}</p>,
+    h3: ({ children }) => (
+      <h3 className="mt-8 mb-2 text-lg font-semibold tracking-tight">{children}</h3>
+    ),
+    p: ({ children }) => <p className="my-5 text-justify text-fg/90 [hyphens:none]">{children}</p>,
     a: ({ href, children }) => {
       const internal = href?.startsWith('/')
       return (
