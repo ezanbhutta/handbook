@@ -40,9 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true
+    // Tracks whose profile is currently loaded: undefined = not initialised
+    // yet, null = signed out, string = that user. Supabase re-checks the
+    // session whenever the tab regains focus and re-emits an auth event
+    // (SIGNED_IN / TOKEN_REFRESHED) for the *same* user. Reloading on those
+    // flipped `loading` back to true and flashed the whole app's loading
+    // screen on every tab switch, so we skip them and only (re)load the
+    // profile when the signed-in user actually changes.
+    let loadedUserId: string | null | undefined = undefined
 
     async function load(nextSession: Session | null) {
-      if (!nextSession?.user) {
+      const userId = nextSession?.user?.id ?? null
+      if (!userId) {
+        loadedUserId = null
         if (active) {
           setProfile(null)
           setLoading(false)
@@ -50,14 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return
       }
       try {
-        const p = await fetchProfile(nextSession.user.id)
+        const p = await fetchProfile(userId)
         if (!active) return
         // No profile, or deactivated account => treat as no access.
         if (!p || !p.is_active) {
           await supabase.auth.signOut()
+          loadedUserId = null
           setProfile(null)
           setSession(null)
         } else {
+          loadedUserId = userId
           setProfile(p)
         }
       } catch {
@@ -70,11 +82,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data }) => {
       if (!active) return
       setSession(data.session)
+      const userId = data.session?.user?.id ?? null
+      if (userId === loadedUserId) return
       void load(data.session)
     })
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession)
+      const nextUserId = nextSession?.user?.id ?? null
+      // Same user (or still signed out) => keep the refreshed session, but do
+      // not reload the profile or flip `loading`, which would reload the app.
+      if (nextUserId === loadedUserId) return
       setLoading(true)
       void load(nextSession)
     })
