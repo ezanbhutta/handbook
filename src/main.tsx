@@ -11,9 +11,16 @@ import './index.css'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60_000,
+      // Keep content fresh so edits show up without a manual refresh. When the
+      // tab regains focus or the connection returns, React Query refetches in
+      // the background: the current content stays on screen and is swapped when
+      // the new data arrives, so there is no loading flash. (The auth provider
+      // no longer flips to a loading state on focus, which was the real cause
+      // of the old reload-on-tab-switch.)
+      staleTime: 10_000,
       retry: 1,
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
     },
   },
 })
