@@ -1,0 +1,20 @@
+name: Security checks
+
+# Runs the security guardrails (scripts/security-check.sh) on every push and PR,
+# so a regression in token strength, secret handling, markdown sanitization, or
+# the security headers is caught before it ships.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run security guardrails
+        run: bash scripts/security-check.sh

@@ -10,15 +10,22 @@ export type AccessLink = {
   created_at: string
 }
 
-// Short, unguessable-enough token. Uses an alphabet without look-alike
-// characters (no 0/O/1/I/l) so links stay short and easy to read/type. 6 chars
-// of this alphabet is ~35 bits — fine for a read-only, rotatable handbook link.
+// Strong, unguessable token. CSPRNG over an alphabet without look-alike
+// characters (no 0/O/1/I/l). 26 chars of this 56-char alphabet is ~150 bits of
+// entropy, so the link is infeasible to brute-force even though the reader RPCs
+// are reachable with the public anon key. Rejection sampling avoids modulo bias.
+// The database also enforces a minimum token length, so a weak token cannot be
+// stored even if this generator regressed.
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'
+const TOKEN_LEN = 26
 export function newToken(): string {
-  const bytes = new Uint8Array(6)
-  crypto.getRandomValues(bytes)
+  const limit = Math.floor(256 / ALPHABET.length) * ALPHABET.length
+  const buf = new Uint8Array(1)
   let out = ''
-  for (let i = 0; i < bytes.length; i++) out += ALPHABET[bytes[i] % ALPHABET.length]
+  while (out.length < TOKEN_LEN) {
+    crypto.getRandomValues(buf)
+    if (buf[0] < limit) out += ALPHABET[buf[0] % ALPHABET.length]
+  }
   return out
 }
 

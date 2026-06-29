@@ -9,18 +9,9 @@
     <meta name="description" content="HaseebMadeit company handbook, the single source of truth for the team." />
     <title>HaseebMadeit Handbook</title>
 
-    <!-- Set the theme before paint to avoid a flash. Defaults to the clean
-         Day brand; Night/Reading are opt-in from the header. -->
-    <script>
-      (function () {
-        try {
-          var t = localStorage.getItem('hb_theme')
-          document.documentElement.dataset.theme = t || 'day'
-        } catch (e) {
-          document.documentElement.dataset.theme = 'day'
-        }
-      })()
-    </script>
+    <!-- Set the theme before paint to avoid a flash. External (not inline) so the
+         Content-Security-Policy can keep a strict script-src 'self'. -->
+    <script src="/theme-init.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
